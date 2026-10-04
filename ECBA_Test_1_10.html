@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECBA Test 10</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1f2937;--mu:#6b7280;--pr:#2563eb;--ok:#16a34a;--okb:#dcfce7;--ko:#dc2626;--kob:#fee2e2;--bd:#e5e7eb}
+@media(prefers-color-scheme:dark){:root{--bg:#111827;--card:#1f2937;--tx:#f3f4f6;--mu:#9ca3af;--bd:#374151;--okb:#14532d;--kob:#7f1d1d}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+header{background:var(--pr);color:#fff;text-align:center;padding:22px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:1.5rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+main{max-width:760px;margin:0 auto;padding:20px 14px 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:16px}
+.start{text-align:center;margin-top:40px}
+input[type=text]{width:100%;max-width:340px;padding:11px 14px;font-size:1rem;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+button{background:var(--pr);color:#fff;border:0;border-radius:8px;padding:11px 26px;font-size:1rem;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.err{color:var(--ko);font-size:.9rem;min-height:1.3em;margin-top:6px}
+.q{font-weight:600;margin:0 0 12px}
+.q small{color:var(--mu);font-weight:500}
+label.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer}
+label.opt:hover{border-color:var(--pr)}
+label.opt input{margin-top:4px}
+.done label.opt{cursor:default}
+.opt.correct{background:var(--okb);border-color:var(--ok)}
+.opt.wrong{background:var(--kob);border-color:var(--ko)}
+.badge{font-weight:700;margin-top:6px;font-size:.95rem}
+.badge.ok{color:var(--ok)}.badge.ko{color:var(--ko)}
+.result{text-align:center;font-size:1.3rem;font-weight:700}
+.result span{color:var(--pr);font-size:1.9rem}
+.exp{margin-top:10px;padding:12px;border-left:4px solid var(--pr);background:var(--bg);border-radius:6px;font-size:.93rem}
+.exp p{margin:0 0 8px}.exp p:last-child{margin:0}
+.exp .t{font-weight:700;color:var(--pr)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1>ECBA Test 10</h1><p id="who"></p></header>
+<main>
+  <section id="start" class="card start">
+    <h2>Nhập tên của bạn để bắt đầu</h2>
+    <input id="name" type="text" placeholder="Họ và tên" autocomplete="name">
+    <div class="err" id="err"></div>
+    <button id="go">Bắt đầu làm bài</button>
+  </section>
+  <section id="quiz" class="hidden">
+    <div id="result" class="card result hidden"></div>
+    <div id="list"></div>
+    <div style="text-align:center"><button id="submit">Nộp bài</button></div>
+  </section>
+</main>
+<script>
+const Q=[{"q": "While assessing requirements changes, a business analyst (BA) will determine the formality of the assessment process based on:", "o": ["business analysis approach.", "governance approach.", "change strategy.", "potential value."], "k": 2, "e": ["The formality of the requirements assessment process is determined based on the change strategy. Different change strategies may require different levels of formality when assessing requirements changes."]}, {"q": "To ensure that \"all requirements and designs align to business requirements\" is the purpose of which task?", "o": ["Conduct elicitation", "Verify requirements", "Validate requirements", "Assess risks"], "k": 2, "e": ["The purpose of Validate Requirements is to ensure that all requirements and designs align with business requirements and support the business goals and objectives. This step confirms that the proposed solution will deliver real business value and meet stakeholder needs.Other incorrect answers:A. Conduct elicitation – Focuses on gathering requirements, not validating them.B. Verify requirements – Ensures requirements are wellformed, complete, and follow standards but does not check alignment with business needs.D. Assess risks – Identifies risks but does not validate requirement alignment."]}, {"q": "The likelihood that the requirement will change because it requires further analysis is termed as:", "o": ["benefit.", "stability.", "penalty.", "dependency."], "k": 1, "e": ["Stability refers to the likelihood of a requirement changing due to uncertainty or the need for further analysis. Unstable requirements often require additional refinement before finalization."]}, {"q": "Which of the following are criteria used to determine quality requirements relationships?", "o": ["Necessity, validate, derive", "Complexity, stability, status", "Penalty, benefit, cost", "Necessary, consistent, correct"], "k": 3, "e": ["The criteria used to determine quality requirements relationships include ensuring that they are necessary (essential to the business need), consistent (free from contradictions), and correct (accurate)."]}, {"q": "You are a business analyst working on a new software development project. The project manager asks you to manage stakeholder collaboration for the project. According to BABOK® v3, which of the following would you consider as inputs for managing stakeholder collaboration?", "o": ["Stakeholder Engagement Approach and Future State Description", "Business Objectives and Future State Description", "Business Objectives and Business Analysis Performance Assessment", "Stakeholder Engagement Approach and Business Analysis Performance Assessment"], "k": 3, "e": ["According to BABOK® v3, Stakeholder Engagement Approach and Business Analysis Performance Assessment are the inputs for the Manage Stakeholder Collaboration process. The Stakeholder Engagement Approach outlines the strategies and tactics that will be used to engage stakeholders. The Business Analysis Performance Assessment is used to evaluate the effectiveness of business analysis activities and can provide valuable insights for stakeholder collaboration.Option Option1: Future State Description is related to the solution scope and not directly an input for managing stakeholder collaboration.Option Option2: Business Objectives are related to the desired outcomes of the business and not directly inputs for managing stakeholder collaboration. Future State Description is related to the solution scope and not directly an input for managing stakeholder collaboration.Option Option4: Business Objectives are related to the desired outcomes of the business and not directly inputs for managing stakeholder collaboration."]}, {"q": "Which of the following accurately describes a stakeholder's role during future state analysis?", "o": ["A regulator would ensure an envisioned future state can be sufficiently tested and can help set an appropriate level of quality to target.", "A domain subject matter expert would provide insight into current state and potential states.", "A project manager would be directly involved in supporting the operations of the enterprise.", "An end user would help determine which business needs to address and sets the business objective that a future state will achieve."], "k": 1, "e": ["D is CorrectD. A domain subject matter expert would provide insight into current state and potential states: Domain subject matter experts (SMEs) provide detailed knowledge about specific areas within the organization. They are critical for understanding the current state and offering insights into what the future state could look like based on their expertise.A. Regulators focus on ensuring compliance with laws, regulations, and standards. They might set quality standards and ensure regulatory compliance, but their role is not specifically about ensuring the future state can be tested.B. End users provide valuable input on their needs and how the current system affects them. They help identify which business needs should be addressed, but typically they do not set business objectives. Business objectives are usually determined by higherlevel stakeholders, such as business analysts or senior management, based on end user input and other factors.C. Project managers are responsible for planning, executing, and managing projects. They ensure that the project stays on track but are not primarily involved in supporting daytoday operations or defining future state objectives."]}, {"q": "Supporting materials that a business analyst (BA) might seek to secure while preparing for elicitation include:", "o": ["system costs, business revenues, organizational designs, and rules.", "system documents, business rules, organizational policies, and regulations.", "system names, business contacts, organizational forms, and protocols.", "system limits, business models, organizational structures, and principles."], "k": 1, "e": ["While preparing for elicitation, a business analyst may seek to secure supporting materials such as system documents, business rules, organizational policies, and regulations to gather relevant information."]}, {"q": "The requirements life cycle ends when:", "o": ["solution and the requirements that represent it are retired.", "solution is implemented and the project team disbands.", "all requirements are verified and validated by the stakeholders.", "solution is defined and approved by the stakeholders."], "k": 0, "e": ["The requirements life cycle ends when the solution and the requirements that represent it are retired or no longer needed."]}, {"q": "You are a business analyst working on a project to develop a new software application. The project manager wants to understand the potential value of the requirements. Which of the following stakeholders would you most likely involve in creating test plans and test cases to validate these requirements?", "o": ["The software development team", "The project sponsor", "The tester", "The end users"], "k": 2, "e": ["The tester is the correct choice. Testers play a critical role in validating that the requirements have been implemented correctly. They create test plans and test cases based on the requirements, and their testing can reveal whether the requirements have been met. This information can help in analyzing the potential value of the requirements and in making recommendations about the solution.", "Option 1: The software development team is responsible for implementing the requirements, but they do not typically create test plans and test cases. This task is usually performed by testers.", "Option 2: The project sponsor provides overall direction and makes highlevel decisions about the project, but they do not typically get involved in creating test plans and test cases.", "Option 3: End users can provide valuable input into the requirements and can participate in user acceptance testing. However, they do not typically create test plans and test cases. This task is usually performed by testers."]}, {"q": "Your organization is developing a new software product. As a business analyst, you have identified a set of requirements that could prove valuable in the long term. How should these requirements be managed so they can be easily retrieved by other stakeholders in the future?", "o": ["They should be stored based on their source, priority, and complexity.", "They should be clearly named, defined, and stored in a manner that makes them easily retrievable.", "They should be stored based on their complexity.", "They should be stored based on how frequently they are used."], "k": 1, "e": ["For requirements that are candidates for longterm use by the organization, they should be clearly named, defined, and stored in a manner that makes them easily retrievable by other stakeholders. This is because these requirements could be referred to in the future when developing similar products or when making improvements to the current product. Therefore, easy retrieval is crucial to ensure that they are readily available when needed.", "Option 2: Storing requirements based on their complexity does not necessarily make them easily retrievable. The complexity of a requirement does not determine its relevance or value in the long term.", "Option 3: Storing requirements based on how frequently they are used is not the most effective way to manage requirements for longterm use. Some requirements may not be used frequently but could still be valuable in the long term.", "Option 4: Storing requirements based on their source, priority, and complexity could make them difficult to retrieve in the future. While these factors are important, they do not necessarily make a requirement easily retrievable."]}];
+const L="ABCDEFGH";
+const $=id=>document.getElementById(id);
+let name="";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function start(){
+  name=$("name").value.trim();
+  if(!name){$("err").textContent="Vui lòng nhập tên trước khi làm bài.";return}
+  $("who").textContent="Người làm bài: "+name;
+  $("start").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  render();
+}
+function render(){
+  $("list").innerHTML=Q.map((q,i)=>`
+    <div class="card" id="c${i}">
+      <p class="q"><small>Câu ${i+1}/${Q.length}</small><br>${esc(q.q)}</p>
+      ${q.o.map((o,j)=>`<label class="opt" id="o${i}_${j}"><input type="radio" name="q${i}" value="${j}"><span><b>${L[j]}.</b> ${esc(o)}</span></label>`).join("")}
+      <div class="badge" id="b${i}"></div><div id="e${i}"></div>
+    </div>`).join("");
+}
+function submit(){
+  let score=0;
+  Q.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name=q${i}]:checked`);
+    const ans=sel?+sel.value:-1;
+    document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.disabled=true);
+    $("c"+i).classList.add("done");
+    $(`o${i}_${q.k}`).classList.add("correct");
+    $("e"+i).innerHTML=`<div class="exp"><p class="t">Giải thích</p>${q.e.map(x=>`<p>${esc(x)}</p>`).join("")}</div>`;
+    const b=$("b"+i);
+    if(ans===q.k){score++;b.className="badge ok";b.textContent="✓ Đúng"}
+    else{
+      if(ans>=0)$(`o${i}_${ans}`).classList.add("wrong");
+      b.className="badge ko";
+      b.textContent=(ans<0?"✗ Chưa trả lời":"✗ Sai")+" — Đáp án đúng: "+L[q.k]+". "+q.o[q.k];
+    }
+  });
+  $("submit").classList.add("hidden");
+  const r=$("result");
+  r.classList.remove("hidden");
+  r.innerHTML=`${esc(name)}, kết quả của bạn:<br><span>${score}/${Q.length}</span> câu đúng`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("go").onclick=start;
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")start()});
+$("submit").onclick=submit;
+</script>
+</body>
+</html>
