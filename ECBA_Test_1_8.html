@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECBA Test 8</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1f2937;--mu:#6b7280;--pr:#2563eb;--ok:#16a34a;--okb:#dcfce7;--ko:#dc2626;--kob:#fee2e2;--bd:#e5e7eb}
+@media(prefers-color-scheme:dark){:root{--bg:#111827;--card:#1f2937;--tx:#f3f4f6;--mu:#9ca3af;--bd:#374151;--okb:#14532d;--kob:#7f1d1d}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+header{background:var(--pr);color:#fff;text-align:center;padding:22px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:1.5rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+main{max-width:760px;margin:0 auto;padding:20px 14px 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:16px}
+.start{text-align:center;margin-top:40px}
+input[type=text]{width:100%;max-width:340px;padding:11px 14px;font-size:1rem;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+button{background:var(--pr);color:#fff;border:0;border-radius:8px;padding:11px 26px;font-size:1rem;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.err{color:var(--ko);font-size:.9rem;min-height:1.3em;margin-top:6px}
+.q{font-weight:600;margin:0 0 12px}
+.q small{color:var(--mu);font-weight:500}
+label.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer}
+label.opt:hover{border-color:var(--pr)}
+label.opt input{margin-top:4px}
+.done label.opt{cursor:default}
+.opt.correct{background:var(--okb);border-color:var(--ok)}
+.opt.wrong{background:var(--kob);border-color:var(--ko)}
+.badge{font-weight:700;margin-top:6px;font-size:.95rem}
+.badge.ok{color:var(--ok)}.badge.ko{color:var(--ko)}
+.result{text-align:center;font-size:1.3rem;font-weight:700}
+.result span{color:var(--pr);font-size:1.9rem}
+.exp{margin-top:10px;padding:12px;border-left:4px solid var(--pr);background:var(--bg);border-radius:6px;font-size:.93rem}
+.exp p{margin:0 0 8px}.exp p:last-child{margin:0}
+.exp .t{font-weight:700;color:var(--pr)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1>ECBA Test 8</h1><p id="who"></p></header>
+<main>
+  <section id="start" class="card start">
+    <h2>Nhập tên của bạn để bắt đầu</h2>
+    <input id="name" type="text" placeholder="Họ và tên" autocomplete="name">
+    <div class="err" id="err"></div>
+    <button id="go">Bắt đầu làm bài</button>
+  </section>
+  <section id="quiz" class="hidden">
+    <div id="result" class="card result hidden"></div>
+    <div id="list"></div>
+    <div style="text-align:center"><button id="submit">Nộp bài</button></div>
+  </section>
+</main>
+<script>
+const Q=[{"q": "Which elicitation type involves the discovery of information under controlled tests?", "o": ["Research", "Experiment", "Collaborative", "Workshop"], "k": 1, "e": ["The elicitation type that involves the discovery of information under controlled tests is an \"Experiment.\" This type of elicitation is used when information needs to be collected through structured experiments or tests."]}, {"q": "Imagine you are a business analyst for a software development company. Your team is considering two potential solutions for a new project. Solution A has an upfront cost of $500,000 and is expected to generate $1,000,000 in benefits. Solution B has an upfront cost of $200,000 and is expected to generate $600,000 in benefits. If Solution A is chosen, what would be the opportunity cost?", "o": ["The cost of rejecting both solutions.", "The cost of maintaining Solution A.", "The value of Solution B not selected.", "The cost of implementing Solution A."], "k": 2, "e": ["Opportunity cost refers to the potential benefits an individual, investor, or business misses out on when choosing one alternative over another. In this case, if Solution A is chosen, the opportunity cost would be the value of Solution B not selected, as this value represents the benefits that could have been gained if Solution B had been chosen instead.", "Option 1: This is incorrect because the cost of implementing Solution A is not an opportunity cost, but a direct cost associated with the chosen solution.", "Option 2: This is incorrect because the cost of maintaining Solution A is not an opportunity cost, but a direct cost associated with the chosen solution.", "Option 4: This is incorrect because the cost of rejecting both solutions does not represent an opportunity cost. Opportunity cost is about the value of the next best alternative forgone, not the cost of rejecting all alternatives."]}, {"q": "In the context of a new software development project, the project manager is presented with several design options. What is the role of the project manager in this scenario?", "o": ["The project manager provides information on the functionality associated with each design option.", "The project manager plans and manages the solution definition process.", "The project manager uses their expertise to provide needed input about the constraints of a solution and its costs.", "The project manager makes the final decision on the design option to be implemented."], "k": 1, "e": ["The correct answer is Option 3. In the context of defining design options, the project manager's role is to plan and manage the solution definition process. They guide the team in evaluating the potential value of each solution, taking into consideration the project's requirements, constraints, and stakeholders' needs. They do not make the final decision on the design option to be implemented, as this is typically a collaborative decision involving key stakeholders.", "Option 1: Option 1 is incorrect. The project manager does not make the final decision on the design option to be implemented. This is typically a collaborative decision involving key stakeholders.", "Option 2: Option 2 is incorrect. While the project manager may provide information on the functionality associated with each design option, this is not their primary role in the context of defining design options.", "Option 4: Option 4 is incorrect. Although the project manager may provide input about the constraints of a solution and its costs, their main role in this context is to plan and manage the solution definition process."]}, {"q": "As a business analyst, you are about to start the elicitation activities for a new project. The project aims to develop a new software system for the company. You have not fully understood or elicited the need yet. What is the most critical requirement to successfully begin elicitation activities?", "o": ["Having a need, even if not fully elicited or understood", "Having a completed solution for the new software system", "Having a fully implemented strategy for the project", "Having a finalized stakeholder list"], "k": 0, "e": ["The most critical requirement to successfully begin elicitation activities is having a need, even if it is not fully elicited or understood yet. This need serves as the baseline for the elicitation activities and guides the business analyst in identifying and understanding the requirements. Without a need, the business analyst would not know what to elicit or analyze.", "Option 1: Having a finalized stakeholder list is important, but it is not the most critical requirement to begin elicitation activities. The stakeholder list can be refined as the project progresses.", "Option 2: Having a fully implemented strategy for the project is beneficial, but it is not the most critical requirement to start elicitation activities. The strategy can be developed and refined as the project progresses and as more information is elicited and analyzed.", "Option 4: Having a completed solution for the new software system is not necessary to begin elicitation activities. In fact, the solution is typically developed based on the results of the elicitation and analysis activities."]}, {"q": "As a Business Analyst, you are working on a project that requires a high level of traceability for requirements. Which of the following tools mentioned in BABOK® v3 would you choose to ensure efficient tracking of requirement approvals?", "o": ["Change Strategy", "Governance Approach", "Requirement Management Tools/Repository", "Solution Scope"], "k": 2, "e": ["The Requirement Management Tools/Repository is the correct choice because it provides a centralized location for storing, managing, and tracking requirements. It allows the Business Analyst to maintain a high level of traceability for requirements, including approvals. This tool can track changes to requirements, maintain a history of changes, and link related requirements. It is mentioned in BABOK® v3 as a tool that can be used for requirement management and traceability.", "Option 1: Change Strategy is not the correct choice. While it is important for managing changes, it does not specifically address the tracking of requirement approvals.", "Option 2: Governance Approach is not the correct choice. It provides a structure for decision making and accountability, but it does not specifically address the tracking of requirement approvals.", "Option 3: Solution Scope is not the correct choice. It defines the boundaries of the solution, but it does not specifically address the tracking of requirement approvals."]}, {"q": "Which of the following is a common type of elicitation?", "o": ["Exploration", "Research", "Discussion", "Examination"], "k": 1, "e": ["In business analysis, research is a common type of elicitation technique used to gather information from existing sources. It involves reviewing industry reports, documentation, regulations, competitor analysis, and historical data to understand the business environment and requirements. Other common elicitation techniques include interviews, workshops, observations, surveys, and prototyping, but among the given options, research is the best fit."]}, {"q": "What of the following represents a typical factor that influences the prioritization of requirements?", "o": ["Scope", "Value", "Impact", "Cost"], "k": 1, "e": ["In business analysis, value is a key factor that influences the prioritization of requirements. Requirements that provide higher business value (such as increased revenue, cost savings, risk reduction, or regulatory compliance) are typically given higher priority. Other factors like scope, impact, and cost are also important in decisionmaking, but value is the primary driver in determining which requirements should be addressed first to maximize business benefits."]}, {"q": "In which activity would a business analyst (BA) consider using an organizational Center of Excellence?", "o": ["Defining the limits within which decisions must be made", "Determining the optimal business analysis approach", "Providing techniques and procedures to be followed", "Understanding the stakeholders concerns and interests"], "k": 1, "e": ["A business analyst would consider using an organizational Center of Excellence when \"Determining the optimal business analysis approach.\" Center of Excellence can provide guidance on best practices, methodologies, and approaches for business analysis."]}, {"q": "You are a business analyst in a software company that is developing a new customer relationship management system. The project manager asks you to define the scope of the system. Which of the following would be the most appropriate method to use?", "o": ["Use Business Rules Analysis to analyze business rules so that they can be specified and modelled alongside requirements.", "Use Glossary to record the meaning of relevant business terms while analyzing requirements.", "Use Scope Modelling to visually represent the scope boundary of the system.", "Use Decision Modelling to represent decisions in a model to show the elements of decision making."], "k": 2, "e": ["Scope Modelling is the most appropriate method to define the scope of a system. It provides a visual representation of what is in and out of the scope of the system, which helps to avoid any misunderstandings or ambiguities. It also helps to ensure that all necessary elements are included in the scope and that unnecessary elements are excluded. This is crucial in ensuring that the project team focuses on the right areas and that the project delivers what is expected.", "Option 2: Decision Modelling is used to represent decisions in a model to show the elements of decision making. It is not used to define the scope of a system.", "Option 3: Business Rules Analysis is used to analyze business rules so that they can be specified and modelled alongside requirements. It is not used to define the scope of a system.", "Option 4: Glossary is used to record the meaning of relevant business terms while analyzing requirements. It is not used to define the scope of a system."]}, {"q": "When examining requirements relationships, the business analyst (BA) ensures the relationships satisfy the following quality criteria:", "o": ["measurable.", "independent.", "unambiguous.", "testable."], "k": 2, "e": ["A. testable ❌ → This criterion applies to individual functional or nonfunctional requirements, not to the relationships between requirements.B. independent ❌ → The nature of requirement relationships is to connect or depend on each other. Therefore, independence is not expected in this context.C. measurable ❌ → Like option A, \"measurable\" applies to requirements themselves (especially nonfunctional ones), e.g., “response time under 2 seconds.” But relationships are not meant to be measured.D. unambiguous ✅ → This is the essential quality criterion for requirement relationships. Any connection between requirements must be clear and explicitly defined, leaving no room for misunderstanding. For example, if one requirement depends on another, that dependency must be clearly and specifically described."]}];
+const L="ABCDEFGH";
+const $=id=>document.getElementById(id);
+let name="";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function start(){
+  name=$("name").value.trim();
+  if(!name){$("err").textContent="Vui lòng nhập tên trước khi làm bài.";return}
+  $("who").textContent="Người làm bài: "+name;
+  $("start").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  render();
+}
+function render(){
+  $("list").innerHTML=Q.map((q,i)=>`
+    <div class="card" id="c${i}">
+      <p class="q"><small>Câu ${i+1}/${Q.length}</small><br>${esc(q.q)}</p>
+      ${q.o.map((o,j)=>`<label class="opt" id="o${i}_${j}"><input type="radio" name="q${i}" value="${j}"><span><b>${L[j]}.</b> ${esc(o)}</span></label>`).join("")}
+      <div class="badge" id="b${i}"></div><div id="e${i}"></div>
+    </div>`).join("");
+}
+function submit(){
+  let score=0;
+  Q.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name=q${i}]:checked`);
+    const ans=sel?+sel.value:-1;
+    document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.disabled=true);
+    $("c"+i).classList.add("done");
+    $(`o${i}_${q.k}`).classList.add("correct");
+    $("e"+i).innerHTML=`<div class="exp"><p class="t">Giải thích</p>${q.e.map(x=>`<p>${esc(x)}</p>`).join("")}</div>`;
+    const b=$("b"+i);
+    if(ans===q.k){score++;b.className="badge ok";b.textContent="✓ Đúng"}
+    else{
+      if(ans>=0)$(`o${i}_${ans}`).classList.add("wrong");
+      b.className="badge ko";
+      b.textContent=(ans<0?"✗ Chưa trả lời":"✗ Sai")+" — Đáp án đúng: "+L[q.k]+". "+q.o[q.k];
+    }
+  });
+  $("submit").classList.add("hidden");
+  const r=$("result");
+  r.classList.remove("hidden");
+  r.innerHTML=`${esc(name)}, kết quả của bạn:<br><span>${score}/${Q.length}</span> câu đúng`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("go").onclick=start;
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")start()});
+$("submit").onclick=submit;
+</script>
+</body>
+</html>
