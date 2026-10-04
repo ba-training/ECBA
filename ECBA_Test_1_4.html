@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECBA Test 4</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1f2937;--mu:#6b7280;--pr:#2563eb;--ok:#16a34a;--okb:#dcfce7;--ko:#dc2626;--kob:#fee2e2;--bd:#e5e7eb}
+@media(prefers-color-scheme:dark){:root{--bg:#111827;--card:#1f2937;--tx:#f3f4f6;--mu:#9ca3af;--bd:#374151;--okb:#14532d;--kob:#7f1d1d}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+header{background:var(--pr);color:#fff;text-align:center;padding:22px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:1.5rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+main{max-width:760px;margin:0 auto;padding:20px 14px 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:16px}
+.start{text-align:center;margin-top:40px}
+input[type=text]{width:100%;max-width:340px;padding:11px 14px;font-size:1rem;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+button{background:var(--pr);color:#fff;border:0;border-radius:8px;padding:11px 26px;font-size:1rem;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.err{color:var(--ko);font-size:.9rem;min-height:1.3em;margin-top:6px}
+.q{font-weight:600;margin:0 0 12px}
+.q small{color:var(--mu);font-weight:500}
+label.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer}
+label.opt:hover{border-color:var(--pr)}
+label.opt input{margin-top:4px}
+.done label.opt{cursor:default}
+.opt.correct{background:var(--okb);border-color:var(--ok)}
+.opt.wrong{background:var(--kob);border-color:var(--ko)}
+.badge{font-weight:700;margin-top:6px;font-size:.95rem}
+.badge.ok{color:var(--ok)}.badge.ko{color:var(--ko)}
+.result{text-align:center;font-size:1.3rem;font-weight:700}
+.result span{color:var(--pr);font-size:1.9rem}
+.exp{margin-top:10px;padding:12px;border-left:4px solid var(--pr);background:var(--bg);border-radius:6px;font-size:.93rem}
+.exp p{margin:0 0 8px}.exp p:last-child{margin:0}
+.exp .t{font-weight:700;color:var(--pr)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1>ECBA Test 4</h1><p id="who"></p></header>
+<main>
+  <section id="start" class="card start">
+    <h2>Nhập tên của bạn để bắt đầu</h2>
+    <input id="name" type="text" placeholder="Họ và tên" autocomplete="name">
+    <div class="err" id="err"></div>
+    <button id="go">Bắt đầu làm bài</button>
+  </section>
+  <section id="quiz" class="hidden">
+    <div id="result" class="card result hidden"></div>
+    <div id="list"></div>
+    <div style="text-align:center"><button id="submit">Nộp bài</button></div>
+  </section>
+</main>
+<script>
+const Q=[{"q": "In the context of a new software development project, the business analyst is preparing to confirm elicitation results. Who should be involved in this process?", "o": ["All stakeholders and any individuals involved in the project", "Only the Business Analyst and the Project Manager", "Only the Business Analyst and the Domain Subject Matter Experts", "Only the Project Manager and the Software Development Team"], "k": 0, "e": ["The process of confirming elicitation results involves verifying the information that has been gathered during the elicitation process. This is a crucial step to ensure the accuracy and completeness of the information. All stakeholders and any individuals involved in the project should participate in this process. This is because stakeholders can provide different perspectives and additional information that may not have been captured during the initial elicitation. Involving all relevant individuals also helps to ensure buyin and support for the project.", "Option 1: While the Project Manager and the Software Development Team are important members of the project, they should not be the only ones involved in confirming elicitation results. Other stakeholders and individuals involved in the project can provide valuable insights and information.", "Option 2: Although the Business Analyst and the Project Manager play key roles in the project, they should not be the only ones involved in confirming elicitation results. Other stakeholders and individuals involved in the project can provide valuable insights and information.", "Option 4: While the Business Analyst and the Domain Subject Matter Experts are crucial in the project, they should not be the only ones involved in confirming elicitation results. Other stakeholders and individuals involved in the project can provide valuable insights and information."]}, {"q": "As a business analyst, you are working on a project that involves analyzing a large data set to identify patterns and trends. The data set is complex and unstructured. Which of the following would be a potential limitation of using data mining in this scenario?", "o": ["Data mining cannot handle large data sets", "Data mining requires a clean, wellstructured data set", "Data mining does not provide any predictive capabilities", "Data mining does not allow for pattern recognition"], "k": 1, "e": ["Data mining is a powerful tool that can identify patterns and trends in large data sets. However, it requires a clean and wellstructured data set to function effectively. In this scenario, the data set is complex and unstructured, which could limit the effectiveness of data mining. Therefore, the correct answer is Option 4.", "Option 1: Option 1 is incorrect because data mining is specifically designed to handle large data sets.", "Option 2: Option 2 is incorrect because one of the primary functions of data mining is to identify patterns in data.", "Option 3: Option 3 is incorrect because data mining does provide predictive capabilities, which is one of its main benefits."]}, {"q": "What is used for quality control when verifying requirements and designs?", "o": ["Item tracking", "Acceptance and evaluation criteria", "Checklist", "Review"], "k": 3, "e": ["\"Review\" is used for quality control when verifying requirements and designs. Reviewing involves examining the work products and assessing them for quality, accuracy, and completeness."]}, {"q": "Your company is preparing to implement a new software system. The existing system is welldocumented and information is accurate. However, the new software involves complex processes that are not well documented. As a business analyst, which of the following would be the least effective technique to use in this situation?", "o": ["Document Analysis", "Observation", "Interviews", "Prototyping"], "k": 0, "e": ["Document Analysis would be the least effective technique in this scenario. This is because the new software system involves complex processes that are not well documented. Document Analysis is most effective when there is a substantial amount of documented details available. It is used to elicit requirements by analyzing existing documentation and identifying relevant information. In this case, since the documentation for the new system's processes is not comprehensive, relying solely on Document Analysis might lead to missing or incomplete requirements.", "Option 2: Interviews could be a useful technique in this scenario. By interviewing subject matter experts, users, and other stakeholders, the business analyst can gain a detailed understanding of the new system's processes, even if they are not well documented.", "Option 3: Observation could also be a useful technique. By observing users and other stakeholders as they interact with the new system, the business analyst can gain insights into the system's processes and requirements.", "Option 4: Prototyping could be a very effective technique in this scenario. By creating a prototype of the new system, the business analyst can help stakeholders visualize the system's processes and provide feedback, which can be used to refine the requirements."]}, {"q": "In the context of a new software development project, your team is discussing the 'view' aspect of requirements architecture. The team is considering different viewpoints for the actual requirements and designs for the solution. Which of the following best describes a 'view' in this context?", "o": ["The structure of the business analysis information.", "The interrelationships among the requirements.", "The actual requirements and designs for a particular solution from a chosen viewpoint.", "A set of conventions that define how requirements will be represented, organized, and related."], "k": 2, "e": ["In requirements architecture, 'view' refers to the actual requirements and designs for a particular solution from a chosen viewpoint. It is a representation of the system from a particular perspective, and it includes specific types of information relevant to that perspective. This is why option 4 is the correct answer.", "Option 1: Option 1 is not correct because it refers to a 'model' rather than a 'view'. A model is a set of conventions that define how requirements will be represented, organized, and related.", "Option 2: Option 2 is incorrect as it refers to the 'architecture' aspect of requirements architecture, not the 'view'. The architecture is the overall structure of the business analysis information.", "Option 3: Option 3 is incorrect because it refers to the 'relationships' aspect of requirements architecture, not the 'view'. Relationships refer to the interconnections among the requirements."]}, {"q": "As a business analyst, you are working on a project with rapidly changing requirements. How should you handle the requirement prioritization process in this context?", "o": ["Consider all requirements equally important until the final stages of the project.", "Prioritize requirements once at the beginning of the project and stick to this prioritization.", "Prioritize requirements without taking any breaks until the process is completed.", "Continually prioritize requirements as context evolves and more information becomes available."], "k": 3, "e": ["In a project with rapidly changing requirements, it is crucial to continually prioritize requirements. This means that the prioritization process should be flexible and open for changes as the context evolves and more information becomes available. This approach ensures that the most important requirements are always addressed first, maximizing the value delivered to the stakeholders.", "Option 1: Prioritizing requirements once at the beginning of the project and sticking to this prioritization does not allow for flexibility and adaptability, which are crucial in a project with rapidly changing requirements.", "Option 2: Considering all requirements equally important until the final stages of the project can lead to inefficient use of resources and may not deliver the maximum value to the stakeholders.", "Option 3: Prioritizing requirements without taking any breaks until the process is completed does not allow for changes and adjustments as new information becomes available or the context changes."]}, {"q": "Which of the following is an input to the prepare for elicitation task?", "o": ["Set up logistics", "Elicitation activity plan", "Potential value", "Needs"], "k": 3, "e": ["In BABOK, the \"Prepare for Elicitation\" task ensures that elicitation activities are wellstructured to gather the right information. \"Needs\" are an input because they define why elicitation is required and what information must be gathered.Other options (A, B, C) are part of the elicitation process but not direct inputs to preparation."]}, {"q": "Your company is looking to implement a new software system to streamline operations. As a business analyst, you are tasked with analyzing the potential value and recommending a solution. Which technique would you primarily use to review the elicitation results?", "o": ["Executing Workshops", "Conducting Interviews", "Performing Document Analysis", "Organizing Reviews"], "k": 3, "e": ["Organizing Reviews is the correct answer. Reviews are a technique used to identify errors, issues, and risks during the analysis of elicitation results. They can be performed on any type of deliverable or documentation and are an essential part of ensuring the quality of the analysis. In this scenario, where the business analyst is tasked with analyzing the potential value and recommending a solution, reviews would be the primary technique used to ensure the accuracy and completeness of the elicitation results.", "Option 1: Conducting Interviews is typically used during the elicitation phase to gather information from stakeholders. While it's an important technique, it's not primarily used to review elicitation results.", "Option 2: Performing Document Analysis is a technique used to elicit requirements by studying available documentation on existing and comparable solutions. It doesn't primarily focus on reviewing elicitation results.", "Option 3: Executing Workshops involves gathering multiple stakeholders in a structured setting to elicit requirements. It's not primarily used to review elicitation results."]}, {"q": "During the 'Analyze Potential Value and Recommend Solution' task, a Business Analyst is working with the Domain and Implementation Subject Matter Experts to verify the proposed solution. Who is primarily responsible for ensuring that the verification task has been completed?", "o": ["Both the Business Analyst and the Domain and Implementation Subject Matter Experts", "Only the Business Analyst", "Only the Domain and Implementation Subject Matter Experts", "All stakeholders involved in the project"], "k": 0, "e": ["In the 'Analyze Potential Value and Recommend Solution' task, the Business Analyst works closely with the Domain and Implementation Subject Matter Experts. Therefore, they share the responsibility for ensuring that the verification task has been completed. This collaborative approach ensures that the solution is feasible, satisfies the requirements, and brings value to the organization.", "Option 1: While the Business Analyst plays a crucial role in the verification task, they do not bear the responsibility alone. They share this responsibility with the Domain and Implementation Subject Matter Experts.", "Option 2: The Domain and Implementation Subject Matter Experts play a significant role in the verification task, but they do not bear the responsibility alone. They share this responsibility with the Business Analyst.", "Option 4: Although all stakeholders have a role in the project, the primary responsibility for ensuring that the verification task has been completed lies with the Business Analyst and the Domain and Implementation Subject Matter Experts."]}, {"q": "When defining the requirements architecture, a business analyst (BA) examines the relationships among requirements to ensure that they satisfythe following quality criteria:", "o": ["atomic, complete, concise, feasible, testable.", "defined, necessary, correct, unambiguous, consistent.", "prioritized, understandable, familiar, kinesthetic, visual.", "valueadd, functional, auditable, edited, approved."], "k": 0, "e": ["When defining the requirements architecture, a business analyst examines the relationships among requirements to ensure that they satisfy quality criteria such as being atomic, complete, concise, feasible, and testable. These quality criteria help ensure effective requirements."]}];
+const L="ABCDEFGH";
+const $=id=>document.getElementById(id);
+let name="";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function start(){
+  name=$("name").value.trim();
+  if(!name){$("err").textContent="Vui lòng nhập tên trước khi làm bài.";return}
+  $("who").textContent="Người làm bài: "+name;
+  $("start").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  render();
+}
+function render(){
+  $("list").innerHTML=Q.map((q,i)=>`
+    <div class="card" id="c${i}">
+      <p class="q"><small>Câu ${i+1}/${Q.length}</small><br>${esc(q.q)}</p>
+      ${q.o.map((o,j)=>`<label class="opt" id="o${i}_${j}"><input type="radio" name="q${i}" value="${j}"><span><b>${L[j]}.</b> ${esc(o)}</span></label>`).join("")}
+      <div class="badge" id="b${i}"></div><div id="e${i}"></div>
+    </div>`).join("");
+}
+function submit(){
+  let score=0;
+  Q.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name=q${i}]:checked`);
+    const ans=sel?+sel.value:-1;
+    document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.disabled=true);
+    $("c"+i).classList.add("done");
+    $(`o${i}_${q.k}`).classList.add("correct");
+    $("e"+i).innerHTML=`<div class="exp"><p class="t">Giải thích</p>${q.e.map(x=>`<p>${esc(x)}</p>`).join("")}</div>`;
+    const b=$("b"+i);
+    if(ans===q.k){score++;b.className="badge ok";b.textContent="✓ Đúng"}
+    else{
+      if(ans>=0)$(`o${i}_${ans}`).classList.add("wrong");
+      b.className="badge ko";
+      b.textContent=(ans<0?"✗ Chưa trả lời":"✗ Sai")+" — Đáp án đúng: "+L[q.k]+". "+q.o[q.k];
+    }
+  });
+  $("submit").classList.add("hidden");
+  const r=$("result");
+  r.classList.remove("hidden");
+  r.innerHTML=`${esc(name)}, kết quả của bạn:<br><span>${score}/${Q.length}</span> câu đúng`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("go").onclick=start;
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")start()});
+$("submit").onclick=submit;
+</script>
+</body>
+</html>
