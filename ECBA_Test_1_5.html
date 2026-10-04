@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECBA Test 5</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1f2937;--mu:#6b7280;--pr:#2563eb;--ok:#16a34a;--okb:#dcfce7;--ko:#dc2626;--kob:#fee2e2;--bd:#e5e7eb}
+@media(prefers-color-scheme:dark){:root{--bg:#111827;--card:#1f2937;--tx:#f3f4f6;--mu:#9ca3af;--bd:#374151;--okb:#14532d;--kob:#7f1d1d}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+header{background:var(--pr);color:#fff;text-align:center;padding:22px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:1.5rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+main{max-width:760px;margin:0 auto;padding:20px 14px 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:16px}
+.start{text-align:center;margin-top:40px}
+input[type=text]{width:100%;max-width:340px;padding:11px 14px;font-size:1rem;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+button{background:var(--pr);color:#fff;border:0;border-radius:8px;padding:11px 26px;font-size:1rem;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.err{color:var(--ko);font-size:.9rem;min-height:1.3em;margin-top:6px}
+.q{font-weight:600;margin:0 0 12px}
+.q small{color:var(--mu);font-weight:500}
+label.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer}
+label.opt:hover{border-color:var(--pr)}
+label.opt input{margin-top:4px}
+.done label.opt{cursor:default}
+.opt.correct{background:var(--okb);border-color:var(--ok)}
+.opt.wrong{background:var(--kob);border-color:var(--ko)}
+.badge{font-weight:700;margin-top:6px;font-size:.95rem}
+.badge.ok{color:var(--ok)}.badge.ko{color:var(--ko)}
+.result{text-align:center;font-size:1.3rem;font-weight:700}
+.result span{color:var(--pr);font-size:1.9rem}
+.exp{margin-top:10px;padding:12px;border-left:4px solid var(--pr);background:var(--bg);border-radius:6px;font-size:.93rem}
+.exp p{margin:0 0 8px}.exp p:last-child{margin:0}
+.exp .t{font-weight:700;color:var(--pr)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1>ECBA Test 5</h1><p id="who"></p></header>
+<main>
+  <section id="start" class="card start">
+    <h2>Nhập tên của bạn để bắt đầu</h2>
+    <input id="name" type="text" placeholder="Họ và tên" autocomplete="name">
+    <div class="err" id="err"></div>
+    <button id="go">Bắt đầu làm bài</button>
+  </section>
+  <section id="quiz" class="hidden">
+    <div id="result" class="card result hidden"></div>
+    <div id="list"></div>
+    <div style="text-align:center"><button id="submit">Nộp bài</button></div>
+  </section>
+</main>
+<script>
+const Q=[{"q": "In the context of Requirements Analysis and Design Definition, when a Business Analyst is conducting an elicitation activity, which of the following methods would be considered a 'Collaborative' approach?", "o": ["Facilitating a workshop with key stakeholders.", "Analyzing existing documentation or systems.", "Conducting a survey to gather a large amount of data.", "Performing a oneonone interview with a subject matter expert."], "k": 0, "e": ["In the BABOK v3, 'Collaborative' elicitation is described as involving multiple stakeholders in a joint activity, such as brainstorming sessions or workshops. These activities encourage interaction and communication among the group, which can lead to a richer understanding of the requirements and potential solutions. Therefore, Option 3 is the correct answer as it describes a workshop, which is a collaborative elicitation technique.", "Option 1: Option 1 describes a 'Research' elicitation technique, as it involves gathering data from a large number of people, often in a structured format such as a survey.", "Option 2: Option 2 is also a 'Research' technique, as it involves analyzing existing materials or systems to extract information.", "Option 4: Option 4 describes a 'Direct' elicitation technique, as it involves direct interaction with a single individual to gather information."]}, {"q": "Your organization is implementing a new CRM system. As a business analyst, you are required to analyze the potential value and recommend a solution. How would the availability of resources influence your analysis and recommendation?", "o": ["The availability of resources can either delay or speed up the business analysis work, depending on their availability.", "The availability of resources can delay the business analysis work if resources are scarce.", "The availability of resources can speed up the business analysis work if resources are abundant.", "The availability of resources does not influence the business analysis work."], "k": 0, "e": ["The correct answer is Option 4. The availability of resources can greatly influence the timing of business analysis work. If resources are scarce, the business analysis work might be delayed. On the other hand, if resources are abundant, the business analysis work might be completed sooner. Therefore, as a business analyst, it is crucial to take into account the availability of resources when analyzing the potential value and recommending a solution.", "Option 1: Option 1 is incorrect because the availability of resources does influence the business analysis work. It can either delay or speed up the work, depending on their availability.", "Option 2: Option 2 is partially correct. While it is true that scarce resources can delay the business analysis work, this option does not consider the scenario where resources are abundant, which can speed up the work.", "Option 3: Option 3 is also partially correct. While it is true that abundant resources can speed up the business analysis work, this option does not consider the scenario where resources are scarce, which can delay the work."]}, {"q": "During a project, Business Analyst John is examining a requirement that is selfcontained and can be understood independently of other requirements or designs. What characteristic does this requirement demonstrate?", "o": ["Feasible", "Complete", "Atomic", "Unambiguous"], "k": 2, "e": ["The correct answer is 'Atomic'. An atomic requirement is one that is selfcontained and can be understood independently of other requirements or designs. It is a single, indivisible entity and cannot be broken down further into other requirements. This characteristic makes it easier to comprehend, analyze, and implement the requirement.", "Option 2: 'Feasible' refers to whether the requirement can be realistically achieved given the current project constraints such as time, cost, and resources. It does not refer to the requirement's independence or selfcontainment.", "Option 3: 'Complete' refers to a requirement that is fully stated in one place with no missing information. While a complete requirement may also be atomic, not all atomic requirements are necessarily complete.", "Option 4: 'Unambiguous' means that the requirement has only one possible interpretation. This does not necessarily imply that the requirement is selfcontained or can be understood independently."]}, {"q": "During the requirements analysis for a new software project, the business analyst failed to identify a key stakeholder until late in the process. What could be a potential consequence of this oversight?", "o": ["The project might finish earlier due to fewer opinions.", "It could lead to increased costs due to changes in requirements and rework.", "The stakeholder might feel overlooked and their satisfaction could decrease.", "The business analyst might be promoted for efficient stakeholder management."], "k": 1, "e": ["Identifying stakeholders early in the process is crucial in business analysis. If a key stakeholder is not identified until late in the process, they might bring new requirements or changes that were not considered earlier. This could lead to rework and increased costs. Moreover, the stakeholder might feel overlooked, which could decrease their satisfaction.", "Option 1: While the stakeholder might indeed feel overlooked, this option does not consider the potential increase in costs due to changes in requirements and rework.", "Option 2: This is incorrect. Overlooking a stakeholder does not necessarily lead to the project finishing earlier. In fact, it could delay the project if the overlooked stakeholder brings up new requirements or changes.", "Option 3: This is incorrect. Overlooking a stakeholder is not considered efficient stakeholder management and is unlikely to lead to a promotion."]}, {"q": "Which of the following business analysis activities might be undertaken to verify requirements?", "o": ["Comparing a model with another relevant model", "Evaluating alignment with solution scope", "Organizing requirements into structures", "Identifying a previously documented business need"], "k": 0, "e": ["Comparing a model with another relevant model is a business analysis activity that can be undertaken to verify requirements. This activity helps ensure that the requirements align with the solution scope and are consistent."]}, {"q": "The requirements elicitation technique used to iteratively validate the needs of stakeholders that interact with the application is:", "o": ["interface analysis", "reverse engineering.", "prototyping", "observation."], "k": 2, "e": ["Prototyping is an iterative technique used to create a model or prototype of the solution to validate and refine stakeholder needs. It is especially useful when stakeholders interact with the application to ensure their requirements are met."]}, {"q": "What are the elements of user stories?", "o": ["State tables, flow diagrams, process models, matrices", "Grouping, ranking, negotiation, decision trees", "Main topic, keywords, metrics, indicators", "Conversation, acceptance criteria, title, statement of value"], "k": 3, "e": ["User stories typically consist of elements such as a conversation, acceptance criteria, a title, and a statement of value. These elements help provide context and detail for the user story."]}, {"q": "A business analyst (BA) is someone who elicits the actual needs of organizational stakeholders:", "o": ["in a project team, with an analyst job title.", "in any capacity, regardless of job title.", "in a project team, regardless of job title.", "in any capacity, with an analyst job title."], "k": 2, "e": ["A business analyst is someone who elicits the actual needs of organizational stakeholders while working in a project team, regardless of their job title."]}, {"q": "Which of the following is a basis to initially prioritize requirements?", "o": ["Market demands", "Business benefits", "Organizational policy", "Technological dependency"], "k": 1, "e": ["As per BABOK v3 (Requirements Life Cycle Management – Prioritization Task), requirements should be prioritized based on business value to ensure alignment with strategic goals. Business benefits help in selecting highimpact requirements that deliver maximum value to stakeholders.Other incorrect options:(B) Market demands influence prioritization but are considered after business benefits.(C) Organizational policy may impose constraints but does not determine initial prioritization.(D) Technological dependency is a limitation, not a prioritization criterion."]}, {"q": "Requirements traceability is documented and maintained in accordance with the methods identified by:", "o": ["the business analysis performance assessment approach.", "the information management approach.", "the business analysis approach.", "the governance approach."], "k": 2, "e": ["Requirements traceability, which is the process of documenting and maintaining traceability, is done in accordance with the methods identified in the \"Business Analysis Approach.\" The approach provides the overall framework for how business analysis activities are conducted."]}];
+const L="ABCDEFGH";
+const $=id=>document.getElementById(id);
+let name="";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function start(){
+  name=$("name").value.trim();
+  if(!name){$("err").textContent="Vui lòng nhập tên trước khi làm bài.";return}
+  $("who").textContent="Người làm bài: "+name;
+  $("start").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  render();
+}
+function render(){
+  $("list").innerHTML=Q.map((q,i)=>`
+    <div class="card" id="c${i}">
+      <p class="q"><small>Câu ${i+1}/${Q.length}</small><br>${esc(q.q)}</p>
+      ${q.o.map((o,j)=>`<label class="opt" id="o${i}_${j}"><input type="radio" name="q${i}" value="${j}"><span><b>${L[j]}.</b> ${esc(o)}</span></label>`).join("")}
+      <div class="badge" id="b${i}"></div><div id="e${i}"></div>
+    </div>`).join("");
+}
+function submit(){
+  let score=0;
+  Q.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name=q${i}]:checked`);
+    const ans=sel?+sel.value:-1;
+    document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.disabled=true);
+    $("c"+i).classList.add("done");
+    $(`o${i}_${q.k}`).classList.add("correct");
+    $("e"+i).innerHTML=`<div class="exp"><p class="t">Giải thích</p>${q.e.map(x=>`<p>${esc(x)}</p>`).join("")}</div>`;
+    const b=$("b"+i);
+    if(ans===q.k){score++;b.className="badge ok";b.textContent="✓ Đúng"}
+    else{
+      if(ans>=0)$(`o${i}_${ans}`).classList.add("wrong");
+      b.className="badge ko";
+      b.textContent=(ans<0?"✗ Chưa trả lời":"✗ Sai")+" — Đáp án đúng: "+L[q.k]+". "+q.o[q.k];
+    }
+  });
+  $("submit").classList.add("hidden");
+  const r=$("result");
+  r.classList.remove("hidden");
+  r.innerHTML=`${esc(name)}, kết quả của bạn:<br><span>${score}/${Q.length}</span> câu đúng`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("go").onclick=start;
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")start()});
+$("submit").onclick=submit;
+</script>
+</body>
+</html>
