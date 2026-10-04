@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECBA Test 7</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1f2937;--mu:#6b7280;--pr:#2563eb;--ok:#16a34a;--okb:#dcfce7;--ko:#dc2626;--kob:#fee2e2;--bd:#e5e7eb}
+@media(prefers-color-scheme:dark){:root{--bg:#111827;--card:#1f2937;--tx:#f3f4f6;--mu:#9ca3af;--bd:#374151;--okb:#14532d;--kob:#7f1d1d}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+header{background:var(--pr);color:#fff;text-align:center;padding:22px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:1.5rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+main{max-width:760px;margin:0 auto;padding:20px 14px 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:16px}
+.start{text-align:center;margin-top:40px}
+input[type=text]{width:100%;max-width:340px;padding:11px 14px;font-size:1rem;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+button{background:var(--pr);color:#fff;border:0;border-radius:8px;padding:11px 26px;font-size:1rem;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.err{color:var(--ko);font-size:.9rem;min-height:1.3em;margin-top:6px}
+.q{font-weight:600;margin:0 0 12px}
+.q small{color:var(--mu);font-weight:500}
+label.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer}
+label.opt:hover{border-color:var(--pr)}
+label.opt input{margin-top:4px}
+.done label.opt{cursor:default}
+.opt.correct{background:var(--okb);border-color:var(--ok)}
+.opt.wrong{background:var(--kob);border-color:var(--ko)}
+.badge{font-weight:700;margin-top:6px;font-size:.95rem}
+.badge.ok{color:var(--ok)}.badge.ko{color:var(--ko)}
+.result{text-align:center;font-size:1.3rem;font-weight:700}
+.result span{color:var(--pr);font-size:1.9rem}
+.exp{margin-top:10px;padding:12px;border-left:4px solid var(--pr);background:var(--bg);border-radius:6px;font-size:.93rem}
+.exp p{margin:0 0 8px}.exp p:last-child{margin:0}
+.exp .t{font-weight:700;color:var(--pr)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1>ECBA Test 7</h1><p id="who"></p></header>
+<main>
+  <section id="start" class="card start">
+    <h2>Nhập tên của bạn để bắt đầu</h2>
+    <input id="name" type="text" placeholder="Họ và tên" autocomplete="name">
+    <div class="err" id="err"></div>
+    <button id="go">Bắt đầu làm bài</button>
+  </section>
+  <section id="quiz" class="hidden">
+    <div id="result" class="card result hidden"></div>
+    <div id="list"></div>
+    <div style="text-align:center"><button id="submit">Nộp bài</button></div>
+  </section>
+</main>
+<script>
+const Q=[{"q": "You are a business analyst in a large corporation. After completing the analysis of performance results for a new project, what actions are you likely to identify?", "o": ["Formation, deformation, and transformation actions", "Preventive, corrective, and improvement actions", "Delay, acceleration, and completion actions", "Expansion, reduction, and termination actions"], "k": 1, "e": ["In the context of business analysis, once the analysis of performance results is completed, the possible actions that are identified are typically preventive, corrective, and improvement actions. Preventive actions are those taken to avoid potential issues, corrective actions are taken to fix issues that have occurred, and improvement actions are taken to enhance the performance or effectiveness of the project or process. This is in line with the BABOK v3's guidance on Requirements Analysis and Design Definition.", "Option 2: Delay, acceleration, and completion actions are more related to project management timelines and do not directly relate to the analysis of performance results in the context of business analysis.", "Option 3: Expansion, reduction, and termination actions are strategic decisions that may result from the analysis of performance results but are not actions identified as part of the analysis process itself.", "Option 4: Formation, deformation, and transformation actions are not typically identified in the analysis of performance results. These terms are more commonly used in the context of physical or chemical processes."]}, {"q": "What are the two basic types of interviews to elicit business analysis information?", "o": ["Closed and open ended", "Planned and unplanned", "Unstructured and structured", "Facetoface and telephonic"], "k": 2, "e": ["Interviews for eliciting business analysis information can be: Structured: Predefined questions with a fixed format. Unstructured: Openended discussions allowing flexibility.A mix of both (semistructured) is also commonly used for deeper insights."]}, {"q": "Inputs to prepare for elicitation include:", "o": ["information management approach and solution scope.", "needs and stakeholder engagement approach.", "future state description and risk analysis results.", "requirements and designs."], "k": 1, "e": ["When preparing for elicitation, the key inputs include:Needs – Understanding the business problem or opportunity driving the elicitation.Stakeholder Engagement Approach – Identifying who to engage, how, and when to ensure effective elicitation.These inputs help the BA plan elicitation activities efficiently."]}, {"q": "When stakeholder collaboration is not properly managed, poor relationships can have the following damaging effect on business analysis:", "o": ["failure to meet project deadlines.", "resistance to approving elicitation results.", "lack of support for organizational goals.", "strong negative reactions to obstacles."], "k": 1, "e": ["Poorly managed stakeholder collaboration can lead to resistance in approving elicitation results, which can hinder progress in business analysis."]}, {"q": "Which technique is used by business analysts (BAs) to measure the quality of requirements?", "o": ["Acceptance and Evaluation Criteria", "Risk Analysis and Management", "Key Performance Indicators", "Entity Relationship Modelling"], "k": 0, "e": ["Acceptance and Evaluation Criteria are used by business analysts to measure the quality of requirements. These criteria help define what success looks like for each requirement."]}, {"q": "Your organization is developing a new software and you are tasked with eliciting requirements from stakeholders. You decide to create a preliminary version of the software to validate stakeholders' needs. What elicitation technique are you using?", "o": ["Benchmarking and Market Analysis", "Prototyping", "Brainstorming", "Data Mining"], "k": 1, "e": ["Prototyping is an elicitation technique where a model of the system (or a part of it) is created to help stakeholders visualize and interact with the system. This model can be modified based on feedback from stakeholders, making it an iterative process. Prototyping is highly effective in clarifying stakeholder requirements and expectations, as it provides a tangible representation of the system.", "Option 1: Benchmarking and Market Analysis is not an elicitation technique. It is a technique used to compare an organization's products, services, processes, etc. with those of other organizations in the industry.", "Option 2: Data Mining involves analyzing large volumes of data to discover patterns, correlations, and other insights. It's not used for eliciting requirements.", "Option 3: Brainstorming is an elicitation technique used to generate a large number of ideas from a group of stakeholders. It's not used for validating stakeholder requirements."]}, {"q": "Which of the following techniques is used to elicit business analysis information by examining available materials that describe either the business environment or existing organizational assets?", "o": ["Document analysis", "Process analysis", "Observation", "Use cases and scenarios"], "k": 0, "e": ["Document analysis is a technique used to elicit business analysis information by examining available materials that describe either the business environment or existing organizational assets. It involves reviewing existing documents for relevant information."]}, {"q": "Which of the following describes the confirmation of interview results?", "o": ["Validation", "Followup", "Retrospective", "Conclusion"], "k": 0, "e": ["Validation ensures that the interview results accurately reflect stakeholder needs and expectations. This process involves reviewing, confirming, and refining the gathered information to eliminate misunderstandings or errors."]}, {"q": "As an entrylevel business analyst at XYZ Inc., you have been tasked with performing an interface analysis for a new software system. Which of the following is least likely to be included in your analysis?", "o": ["Interface specifications", "Interaction diagrams", "User satisfaction surveys", "Interface requirements"], "k": 2, "e": ["Interface analysis typically involves defining the interaction between different software systems. This includes detailing interface requirements, specifications, and creating interaction diagrams. While user satisfaction surveys can provide valuable insights into the software's usability, they are not typically part of an interface analysis. Instead, they are more commonly used in usability testing or user acceptance testing stages.", "Option 1: Interface specifications are a crucial part of interface analysis. They provide detailed information about how different systems interact with each other.", "Option 2: Interaction diagrams are also an essential part of interface analysis. They visually represent the flow of control and data among the different systems.", "Option 4: Interface requirements define what is needed from the system's interaction with other systems, making them a key part of interface analysis."]}, {"q": "What is the approach in which solution components are assembled, constructed, or developed by experts as a direct response to a set ofrequirements?", "o": ["Create", "Purchase", "Scope", "Design"], "k": 0, "e": ["The Create approach involves assembling, constructing, or developing solution components by experts in direct response to a set of requirements. This is typically used when an organization decides to build a custom solution rather than purchasing or configuring an existing one."]}];
+const L="ABCDEFGH";
+const $=id=>document.getElementById(id);
+let name="";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function start(){
+  name=$("name").value.trim();
+  if(!name){$("err").textContent="Vui lòng nhập tên trước khi làm bài.";return}
+  $("who").textContent="Người làm bài: "+name;
+  $("start").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  render();
+}
+function render(){
+  $("list").innerHTML=Q.map((q,i)=>`
+    <div class="card" id="c${i}">
+      <p class="q"><small>Câu ${i+1}/${Q.length}</small><br>${esc(q.q)}</p>
+      ${q.o.map((o,j)=>`<label class="opt" id="o${i}_${j}"><input type="radio" name="q${i}" value="${j}"><span><b>${L[j]}.</b> ${esc(o)}</span></label>`).join("")}
+      <div class="badge" id="b${i}"></div><div id="e${i}"></div>
+    </div>`).join("");
+}
+function submit(){
+  let score=0;
+  Q.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name=q${i}]:checked`);
+    const ans=sel?+sel.value:-1;
+    document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.disabled=true);
+    $("c"+i).classList.add("done");
+    $(`o${i}_${q.k}`).classList.add("correct");
+    $("e"+i).innerHTML=`<div class="exp"><p class="t">Giải thích</p>${q.e.map(x=>`<p>${esc(x)}</p>`).join("")}</div>`;
+    const b=$("b"+i);
+    if(ans===q.k){score++;b.className="badge ok";b.textContent="✓ Đúng"}
+    else{
+      if(ans>=0)$(`o${i}_${ans}`).classList.add("wrong");
+      b.className="badge ko";
+      b.textContent=(ans<0?"✗ Chưa trả lời":"✗ Sai")+" — Đáp án đúng: "+L[q.k]+". "+q.o[q.k];
+    }
+  });
+  $("submit").classList.add("hidden");
+  const r=$("result");
+  r.classList.remove("hidden");
+  r.innerHTML=`${esc(name)}, kết quả của bạn:<br><span>${score}/${Q.length}</span> câu đúng`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("go").onclick=start;
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")start()});
+$("submit").onclick=submit;
+</script>
+</body>
+</html>
