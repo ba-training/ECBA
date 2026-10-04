@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECBA Test 3</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1f2937;--mu:#6b7280;--pr:#2563eb;--ok:#16a34a;--okb:#dcfce7;--ko:#dc2626;--kob:#fee2e2;--bd:#e5e7eb}
+@media(prefers-color-scheme:dark){:root{--bg:#111827;--card:#1f2937;--tx:#f3f4f6;--mu:#9ca3af;--bd:#374151;--okb:#14532d;--kob:#7f1d1d}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+header{background:var(--pr);color:#fff;text-align:center;padding:22px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:1.5rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+main{max-width:760px;margin:0 auto;padding:20px 14px 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:16px}
+.start{text-align:center;margin-top:40px}
+input[type=text]{width:100%;max-width:340px;padding:11px 14px;font-size:1rem;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+button{background:var(--pr);color:#fff;border:0;border-radius:8px;padding:11px 26px;font-size:1rem;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.err{color:var(--ko);font-size:.9rem;min-height:1.3em;margin-top:6px}
+.q{font-weight:600;margin:0 0 12px}
+.q small{color:var(--mu);font-weight:500}
+label.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer}
+label.opt:hover{border-color:var(--pr)}
+label.opt input{margin-top:4px}
+.done label.opt{cursor:default}
+.opt.correct{background:var(--okb);border-color:var(--ok)}
+.opt.wrong{background:var(--kob);border-color:var(--ko)}
+.badge{font-weight:700;margin-top:6px;font-size:.95rem}
+.badge.ok{color:var(--ok)}.badge.ko{color:var(--ko)}
+.result{text-align:center;font-size:1.3rem;font-weight:700}
+.result span{color:var(--pr);font-size:1.9rem}
+.exp{margin-top:10px;padding:12px;border-left:4px solid var(--pr);background:var(--bg);border-radius:6px;font-size:.93rem}
+.exp p{margin:0 0 8px}.exp p:last-child{margin:0}
+.exp .t{font-weight:700;color:var(--pr)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1>ECBA Test 3</h1><p id="who"></p></header>
+<main>
+  <section id="start" class="card start">
+    <h2>Nhập tên của bạn để bắt đầu</h2>
+    <input id="name" type="text" placeholder="Họ và tên" autocomplete="name">
+    <div class="err" id="err"></div>
+    <button id="go">Bắt đầu làm bài</button>
+  </section>
+  <section id="quiz" class="hidden">
+    <div id="result" class="card result hidden"></div>
+    <div id="list"></div>
+    <div style="text-align:center"><button id="submit">Nộp bài</button></div>
+  </section>
+</main>
+<script>
+const Q=[{"q": "The business analysis core concept model (BACCMTM) describes which of the following as \"the act of transformation in response to a need\"?", "o": ["Solution", "Change", "Context", "Need"], "k": 1, "e": ["In the context of the Business Analysis Core Concept Model (BACCM), \"Change\" is described as \"the act of transformation in response to a need.\" This definition aligns with the understanding that business analysis often involves identifying needs and implementing changes to address those needs. The BACCM is a framework that provides fundamental concepts and definitions in the field of business analysis, and it emphasizes the significance of change in the context of addressing business needs."]}, {"q": "ABC Corporation is undertaking a new project that is very similar to a project they completed last year. The business analyst has been asked to ensure that the requirements from the previous project are considered for the new project. Where should the business analyst look for these requirements?", "o": ["In the project charter of the previous project.", "In a specialized database that only the business analyst can access.", "In the business plan of the organization.", "In a manner that makes them easily retrievable by other stakeholders."], "k": 3, "e": ["The correct answer is option 4. According to the BABOK v3, Chapter 7, 'Requirements Analysis and Design Definition', it is important to store requirements in a way that they are easily retrievable by other stakeholders. This ensures that the requirements can be reused in future projects, saving time and effort. It also promotes consistency and continuity in the organization's projects.", "Option 1: Option 1 is incorrect because the project charter is a document that formally authorizes a project. It does not typically contain detailed requirements.", "Option 2: Option 2 is incorrect because storing requirements in a specialized database that only the business analyst can access does not promote transparency and collaboration among stakeholders.", "Option 3: Option 3 is incorrect because the business plan of the organization is a strategic document that outlines the organization's overall goals and objectives. It does not contain detailed project requirements."]}, {"q": "Which of the following core competencies fall under the BABOK's underlying competency \"analytical thinking and problem solving\"?", "o": ["Industry knowledge, conceptual thinking and business acumen", "Decision making ethics and adaptability", "Learning systems thinking and decision making", "Leadership and influencing, facilitation and teamwork"], "k": 2, "e": ["The core competencies of \"Learning,\" \"Systems Thinking,\" and \"Decision Making\" are associated with the underlying competency \"Analytical Thinking and Problem Solving.\" These core competencies involve the ability to analyze, think critically, and make informed decisions."]}, {"q": "If a business analyst (BA) does not properly identify stakeholders, then the longterm implications are:", "o": ["increased costs.", "reduced requirements.", "decreased risk.", "higher satisfaction."], "k": 0, "e": ["If stakeholders are not properly identified, their needs and requirements might not be captured accurately or at all. This can lead to costly rework, delays, and changes later in the project when those missing requirements are discovered. Misalignment and misunderstandings can also lead to inefficient use of resources, driving up costs."]}, {"q": "You are a Business Analyst working on a project to improve the company's inventory management system. You have been asked to analyze the existing business analysis processes and identify opportunities for improvement. Which technique would you use?", "o": ["Process Analysis", "SWOT Analysis", "Brainstorming", "Benchmarking"], "k": 0, "e": ["Process Analysis is the correct answer. This technique is used to identify and understand the activities, dependencies, and the value of the processes to improve the overall efficiency of the business. It involves identifying the steps in a business process, understanding the relationship between them, and determining how they can be improved. Process Analysis can help identify bottlenecks, redundancies, and unnecessary steps in a process, which can then be eliminated or improved to increase efficiency and effectiveness.", "Option 1: Brainstorming is a technique used to generate ideas and solutions for a problem. While it can be used in conjunction with process analysis, it is not a technique for analyzing processes.", "Option 3: Benchmarking is a technique used to compare an organization's performance with that of other similar organizations to identify best practices. It is not specifically used for analyzing business analysis processes.", "Option 4: SWOT Analysis is a strategic planning tool used to identify an organization's strengths, weaknesses, opportunities, and threats. It is not a technique for analyzing business analysis processes."]}, {"q": "XYZ Corporation is undergoing a major system upgrade. As a business analyst, who would you need to communicate with to ensure a comprehensive understanding of the existing system and the potential value of the new system?", "o": ["The Implementation Subject Matter Expert and the Tester only", "The Customer and the Implementation Subject Matter Expert only", "The End User and the Tester only", "The Domain Subject Matter Expert and any other stakeholder"], "k": 3, "e": ["The Domain Subject Matter Expert and any other stakeholder are the most likely to be communicated with during a change initiative. The Domain Subject Matter Expert has a deep understanding of the existing system and can provide valuable insights into the functional requirements of the new system. Other stakeholders, such as the project sponsor, project team members, and even end users, can provide a broader perspective on the potential value of the new system, including its impact on business operations and customer service.", "Option 1: While the End User and the Tester are important stakeholders, they do not provide a comprehensive understanding of the existing system and potential value of the new system. The End User can provide user requirements, and the Tester can provide feedback on system performance, but they do not have the depth of knowledge that the Domain Subject Matter Expert has.", "Option 2: The Customer and the Implementation Subject Matter Expert are also important stakeholders, but they do not provide a comprehensive understanding of the existing system and potential value of the new system. The Customer can provide business requirements, and the Implementation Subject Matter Expert can provide technical requirements, but they do not have the depth of knowledge that the Domain Subject Matter Expert has.", "Option 4: The Implementation Subject Matter Expert and the Tester are important stakeholders, but they do not provide a comprehensive understanding of the existing system and potential value of the new system. The Implementation Subject Matter Expert can provide technical requirements, and the Tester can provide feedback on system performance, but they do not have the depth of knowledge that the Domain Subject Matter Expert has."]}, {"q": "Your team has recently approved a significant change in the project. You are now reviewing the requirements to ensure they are still accurate. Who would typically take on this role within your team?", "o": ["Tester", "Domain Subject Matter Expert", "Operational Support", "Business Analyst"], "k": 3, "e": ["The correct answer is Option 4: Business Analyst. According to BABOK v3 Chapter 7, 'Requirements Analysis and Design Definition', it is the responsibility of the Business Analyst to analyze potential value and recommend solutions. This includes reviewing requirements after a change in the project to ensure they are still accurate. The Business Analyst is the key role in managing and implementing changes in the requirements.", "Option 1: Operational Support is not the correct answer. While Operational Support may be involved in implementing changes, they are not typically responsible for ensuring the accuracy of requirements after a change.", "Option 2: Tester is not the correct answer. While Testers do play a role in verifying that requirements are met, they do not typically ensure the accuracy of requirements after a change.", "Option 3: Domain Subject Matter Expert is not the correct answer. While Domain Subject Matter Experts can provide valuable insight into requirements, it is not typically their role to ensure the accuracy of requirements after a change."]}, {"q": "You are a business analyst working on a project to develop a new software system for a client. The project team has decided to use functional decomposition to better understand the system requirements. How can functional decomposition benefit this project?", "o": ["It can make it easier to assign responsibility for specific functions.", "It can help identify redundant functions.", "It can reduce complexity by breaking down the system into smaller, manageable parts.", "It can help define the company's business strategy."], "k": 0, "e": ["Functional decomposition is a technique used in business analysis to break down a system into smaller parts, which are easier to understand and manage. This technique can make it easier to assign responsibility for specific functions because each function can be clearly defined and assigned to a specific team or individual. Therefore, the correct answer is Option 2.", "Option 1: While functional decomposition can provide valuable insights into the system’s structure and functions, it does not directly help in defining the company's business strategy. This is usually the responsibility of the company's leadership team.", "Option 3: Although functional decomposition can indeed reduce complexity by breaking down the system into smaller parts, this is not the primary benefit of this technique in the context of this question.", "Option 4: Identifying redundant functions can be a benefit of functional decomposition, but it is not the main benefit in the context of this question."]}, {"q": "Your company is considering implementing a new software system that will change the way employees submit their weekly timesheets. As a business analyst, you are conducting an impact analysis. Which of the following would not typically be evaluated in this analysis?", "o": ["The potential effects on the company's stock price due to the software implementation.", "The potential effects on the project schedule due to the software implementation.", "The potential effects on the project costs due to the software implementation.", "The potential effects on the user experience due to the software implementation."], "k": 0, "e": ["The correct answer is 'The potential effects on the company's stock price due to the software implementation.' An impact analysis focuses on understanding the potential effects of a change on the systems, processes, and people within the organization. While it does consider factors such as project schedule, costs, and user experience, it typically does not directly evaluate the potential effects on the company's stock price. This is because the stock price is influenced by a wide variety of factors, many of which are outside the scope of a single project or change.", "Option 1: The potential effects on the project schedule is a typical factor evaluated in an impact analysis.", "Option 2: The potential effects on the project costs is a typical factor evaluated in an impact analysis.", "Option 3: The potential effects on the user experience is a typical factor evaluated in an impact analysis."]}, {"q": "Why would a business analyst (BA) want to define stakeholder assumptions?", "o": ["To manage risk", "To assess model completeness", "To determine needed organizational changes", "To clarify requirements"], "k": 0, "e": ["Defining stakeholder assumptions helps the business analyst manage risk. By identifying and documenting assumptions, it's easier to address uncertainties and potential risks that may impact the project."]}];
+const L="ABCDEFGH";
+const $=id=>document.getElementById(id);
+let name="";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function start(){
+  name=$("name").value.trim();
+  if(!name){$("err").textContent="Vui lòng nhập tên trước khi làm bài.";return}
+  $("who").textContent="Người làm bài: "+name;
+  $("start").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  render();
+}
+function render(){
+  $("list").innerHTML=Q.map((q,i)=>`
+    <div class="card" id="c${i}">
+      <p class="q"><small>Câu ${i+1}/${Q.length}</small><br>${esc(q.q)}</p>
+      ${q.o.map((o,j)=>`<label class="opt" id="o${i}_${j}"><input type="radio" name="q${i}" value="${j}"><span><b>${L[j]}.</b> ${esc(o)}</span></label>`).join("")}
+      <div class="badge" id="b${i}"></div><div id="e${i}"></div>
+    </div>`).join("");
+}
+function submit(){
+  let score=0;
+  Q.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name=q${i}]:checked`);
+    const ans=sel?+sel.value:-1;
+    document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.disabled=true);
+    $("c"+i).classList.add("done");
+    $(`o${i}_${q.k}`).classList.add("correct");
+    $("e"+i).innerHTML=`<div class="exp"><p class="t">Giải thích</p>${q.e.map(x=>`<p>${esc(x)}</p>`).join("")}</div>`;
+    const b=$("b"+i);
+    if(ans===q.k){score++;b.className="badge ok";b.textContent="✓ Đúng"}
+    else{
+      if(ans>=0)$(`o${i}_${ans}`).classList.add("wrong");
+      b.className="badge ko";
+      b.textContent=(ans<0?"✗ Chưa trả lời":"✗ Sai")+" — Đáp án đúng: "+L[q.k]+". "+q.o[q.k];
+    }
+  });
+  $("submit").classList.add("hidden");
+  const r=$("result");
+  r.classList.remove("hidden");
+  r.innerHTML=`${esc(name)}, kết quả của bạn:<br><span>${score}/${Q.length}</span> câu đúng`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("go").onclick=start;
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")start()});
+$("submit").onclick=submit;
+</script>
+</body>
+</html>
