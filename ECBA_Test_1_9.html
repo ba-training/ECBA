@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECBA Test 9</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1f2937;--mu:#6b7280;--pr:#2563eb;--ok:#16a34a;--okb:#dcfce7;--ko:#dc2626;--kob:#fee2e2;--bd:#e5e7eb}
+@media(prefers-color-scheme:dark){:root{--bg:#111827;--card:#1f2937;--tx:#f3f4f6;--mu:#9ca3af;--bd:#374151;--okb:#14532d;--kob:#7f1d1d}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+header{background:var(--pr);color:#fff;text-align:center;padding:22px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:1.5rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+main{max-width:760px;margin:0 auto;padding:20px 14px 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:16px}
+.start{text-align:center;margin-top:40px}
+input[type=text]{width:100%;max-width:340px;padding:11px 14px;font-size:1rem;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+button{background:var(--pr);color:#fff;border:0;border-radius:8px;padding:11px 26px;font-size:1rem;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.err{color:var(--ko);font-size:.9rem;min-height:1.3em;margin-top:6px}
+.q{font-weight:600;margin:0 0 12px}
+.q small{color:var(--mu);font-weight:500}
+label.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer}
+label.opt:hover{border-color:var(--pr)}
+label.opt input{margin-top:4px}
+.done label.opt{cursor:default}
+.opt.correct{background:var(--okb);border-color:var(--ok)}
+.opt.wrong{background:var(--kob);border-color:var(--ko)}
+.badge{font-weight:700;margin-top:6px;font-size:.95rem}
+.badge.ok{color:var(--ok)}.badge.ko{color:var(--ko)}
+.result{text-align:center;font-size:1.3rem;font-weight:700}
+.result span{color:var(--pr);font-size:1.9rem}
+.exp{margin-top:10px;padding:12px;border-left:4px solid var(--pr);background:var(--bg);border-radius:6px;font-size:.93rem}
+.exp p{margin:0 0 8px}.exp p:last-child{margin:0}
+.exp .t{font-weight:700;color:var(--pr)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1>ECBA Test 9</h1><p id="who"></p></header>
+<main>
+  <section id="start" class="card start">
+    <h2>Nhập tên của bạn để bắt đầu</h2>
+    <input id="name" type="text" placeholder="Họ và tên" autocomplete="name">
+    <div class="err" id="err"></div>
+    <button id="go">Bắt đầu làm bài</button>
+  </section>
+  <section id="quiz" class="hidden">
+    <div id="result" class="card result hidden"></div>
+    <div id="list"></div>
+    <div style="text-align:center"><button id="submit">Nộp bài</button></div>
+  </section>
+</main>
+<script>
+const Q=[{"q": "During the process of Plan Business Analysis Governance, your team is assigned to identify the Governance Approach output. Which of the following best describes what your team should identify?", "o": ["The annual leave schedule", "The stakeholders who will have the responsibility and authority to make decisions about business analysis work", "The food to be served at the next company event", "The office seating plan"], "k": 1, "e": ["The Governance Approach output of the Plan Business Analysis Governance identifies the stakeholders who will have the responsibility and authority to make decisions about business analysis work. This includes defining the decisionmaking process, roles, and responsibilities, and the escalation process for decisionmaking.", "Option 2: The annual leave schedule is not related to the Governance Approach output. It is a part of human resource management but does not directly influence the decisions about business analysis work.", "Option 3: The office seating plan is not related to the Governance Approach output. It may influence the working environment but does not directly impact the decisions about business analysis work.", "Option 4: The food to be served at the next company event is not related to the Governance Approach output. It is a part of event planning but does not directly influence the decisions about business analysis work."]}, {"q": "You are a business analyst working on a project to develop a new software application. You are in the process of analyzing potential value and recommending a solution. Which of the following is NOT a standard criterion you would consider in regards to the relationships within the requirements architecture?", "o": ["Flexible: the relationship can be easily changed and adapted", "Consistent: relationships are described in the same way, using the same set of standard descriptions as defined in the viewpoints", "Necessary: the relationship is necessary for understanding the requirements holistically", "Defined: there is a relationship and the type of the relationship is described"], "k": 0, "e": ["The correct answer is Option3. In the context of requirements architecture, flexibility refers to the ability of the requirements to adapt to changes. However, this does not apply to the relationships within the requirements architecture. The relationships should be defined, necessary, and consistent but not necessarily flexible.Option Option1: This option is incorrect because a defined relationship is a standard criterion in requirements architecture. It is important to describe the type of relationship.Option Option2: This option is incorrect because a necessary relationship is a standard criterion in requirements architecture. The relationship should contribute to a holistic understanding of the requirements.Option Option4: This option is incorrect because consistency in describing relationships is a standard criterion in requirements architecture. Using the same set of standard descriptions as defined in the viewpoints ensures consistency."]}, {"q": "What is a logical data model used for?", "o": ["Abstracting a 'conceptual data model' to incorporate the rules of normalization to manage data integrity and relationships.", "Abstracting a 'physical data model' to describe the physical organization of data and its relationships within a database.", "Defining the logical rules that govern decisions in an organization and that define, constrain, or enable organizational operations.", "Defining a solution independent view of how a business perceives its information without applying any constraints."], "k": 0, "e": ["A logical data model is used to refine and abstract the conceptual data model by incorporating the rules of normalization to manage data integrity and relationships."]}, {"q": "You are a business analyst for a software company that is considering investing in a new project. The project involves developing a new software product that is expected to generate significant revenue. The company's financial analysts have calculated the Net Present Value (NPV), Internal Rate of Return (IRR) and Payback Period for the project. However, they are unsure about the relevance of the number of active users in assessing the project's viability. As a business analyst, which of the following is your recommendation?", "o": ["The number of active users should be considered, but only after the project has been launched.", "The number of active users is a key metric in financial analysis and should be considered.", "The number of active users should only be considered if the project involves a social media application.", "The number of active users is irrelevant in financial analysis and should not be considered."], "k": 3, "e": ["In financial analysis, the number of active users is not typically used to assess the viability of a project. Financial analysts usually rely on financial metrics such as Net Present Value (NPV), Internal Rate of Return (IRR), and Payback Period to determine the financial viability of a project. While the number of active users may be a relevant metric in certain contexts (e.g., for a social media application), it is not a standard financial metric and is not typically used in financial analysis.", "Option 2: This option is incorrect because, while the number of active users can be an important metric in certain contexts, it is not typically used in financial analysis.", "Option 3: This option is incorrect because it suggests that the number of active users is only relevant for social media applications, which is not accurate. The number of active users can be relevant in many different contexts, not just social media.", "Option 4: This option is incorrect because it suggests that the number of active users should be considered after the project has been launched. In reality, the number of active users is not typically a factor in financial analysis."]}, {"q": "You are a business analyst working on a new software development project. The project has a diverse group of stakeholders. According to the Business Analysis Approach, what is your primary responsibility in managing stakeholder collaboration?", "o": ["Describing the company's overall business strategy to the stakeholders.", "Describing the nature and level of collaboration required from each stakeholder group to perform planned business analysis activities.", "Providing a detailed budget for the business analysis activities to the stakeholders.", "Providing a summary of the business analyst's job description to the stakeholders."], "k": 1, "e": ["The Business Analysis Approach is a guideline/tool used in the Manage Stakeholder Collaboration process. As a business analyst, you are responsible for describing the nature and level of collaboration required from each stakeholder group to perform planned business analysis activities. This is crucial for ensuring that the project's objectives are met and that all stakeholders are aligned in their understanding and expectations.", "Option 1: While it may be part of the business analyst’s role to help stakeholders understand the company's overall business strategy, this is not the primary responsibility in managing stakeholder collaboration according to the Business Analysis Approach.", "Option 2: Providing a detailed budget for the business analysis activities to the stakeholders is not the primary responsibility of a business analyst in managing stakeholder collaboration according to the Business Analysis Approach.", "Option 4: Providing a summary of the business analyst's job description to the stakeholders is not a primary responsibility in managing stakeholder collaboration according to the Business Analysis Approach."]}, {"q": "Who is responsible for identifying the appropriate elicitation communication channels?", "o": ["Business sponsor", "Business analyst", "Subject matter expert", "Project manager"], "k": 1, "e": ["Business analysts are typically responsible for identifying the appropriate elicitation communication channels. They determine how to communicate with stakeholders to gather requirements effectively."]}, {"q": "A business analyst is working on a project in a financial company. She is in the process of defining the Requirements Architecture. What should she expect as the primary output of this process?", "o": ["A Gantt chart showing the project timeline", "A detailed financial report of the project", "The requirements and the interrelationships among them, as well as any contextual information that is recorded", "A list of stakeholders and their roles"], "k": 2, "e": ["The primary output of defining the Requirements Architecture is the requirements and the interrelationships among them, as well as any contextual information that is recorded. This is because the Requirements Architecture provides a structure for the requirements and their interrelationships, which is essential for understanding and managing the requirements throughout the project.", "Option 1: A detailed financial report of the project is not the primary output of defining the Requirements Architecture. While financial considerations may be part of the project, they are not the focus of the Requirements Architecture.", "Option 2: A list of stakeholders and their roles is not the primary output of defining the Requirements Architecture. While understanding stakeholders and their roles is important, it is not the focus of the Requirements Architecture.", "Option 4: A Gantt chart showing the project timeline is not the primary output of defining the Requirements Architecture. While a Gantt chart can be a useful tool for project management, it is not the focus of the Requirements Architecture."]}, {"q": "A business analyst is working on a project to develop a new software application. What is the primary purpose of communicating business analysis information to stakeholders during the requirements analysis and design definition phase according to BABOK® v3?", "o": ["To ensure stakeholders understand the financial implications of the project.", "To engage stakeholders and gain their agreement on the project timeline.", "To ensure stakeholders have a shared understanding of business analysis information.", "To evaluate possible alternatives for a solution."], "k": 2, "e": ["According to BABOK® v3, the main purpose of communicating business analysis information during the requirements analysis and design definition phase is to ensure that all stakeholders have a shared understanding of this information. This shared understanding helps to ensure that all stakeholders are aligned on the project objectives, requirements, and proposed solutions.", "Option 1: While understanding the financial implications of a project is important, it is not the primary purpose of communicating business analysis information during the requirements analysis and design definition phase.", "Option 3: Evaluating possible alternatives for a solution is a part of the business analysis process, but it is not the primary purpose of communicating business analysis information.", "Option 4: Engaging stakeholders and gaining their agreement on the project timeline is important, but it is not the primary purpose of communicating business analysis information during this phase."]}, {"q": "What is a risk that business analysts (BAs) look for when managing stakeholder engagement?", "o": ["Delayed approvals", "Inaccurate cost estimated", "Scope creep", "Resource shortfalls"], "k": 2, "e": ["Scope creep is a risk that business analysts look for when managing stakeholder engagement. It refers to uncontrolled changes or additions to project scope, which can have negative impacts on the project."]}, {"q": "The approach that defines how requirements will be reused is the:", "o": ["information management approach.", "governance approach.", "approach to identifying business analysis improvements.", "business analysis approach."], "k": 0, "e": ["Requirements reuse is a core concept covered in the Information Management knowledge area.The Information Management approach provides a framework for:Identifying reusable requirements based on specific criteria.Establishing a central repository to store these requirements.Implementing processes for maintaining and updating them over time."]}];
+const L="ABCDEFGH";
+const $=id=>document.getElementById(id);
+let name="";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function start(){
+  name=$("name").value.trim();
+  if(!name){$("err").textContent="Vui lòng nhập tên trước khi làm bài.";return}
+  $("who").textContent="Người làm bài: "+name;
+  $("start").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  render();
+}
+function render(){
+  $("list").innerHTML=Q.map((q,i)=>`
+    <div class="card" id="c${i}">
+      <p class="q"><small>Câu ${i+1}/${Q.length}</small><br>${esc(q.q)}</p>
+      ${q.o.map((o,j)=>`<label class="opt" id="o${i}_${j}"><input type="radio" name="q${i}" value="${j}"><span><b>${L[j]}.</b> ${esc(o)}</span></label>`).join("")}
+      <div class="badge" id="b${i}"></div><div id="e${i}"></div>
+    </div>`).join("");
+}
+function submit(){
+  let score=0;
+  Q.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name=q${i}]:checked`);
+    const ans=sel?+sel.value:-1;
+    document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.disabled=true);
+    $("c"+i).classList.add("done");
+    $(`o${i}_${q.k}`).classList.add("correct");
+    $("e"+i).innerHTML=`<div class="exp"><p class="t">Giải thích</p>${q.e.map(x=>`<p>${esc(x)}</p>`).join("")}</div>`;
+    const b=$("b"+i);
+    if(ans===q.k){score++;b.className="badge ok";b.textContent="✓ Đúng"}
+    else{
+      if(ans>=0)$(`o${i}_${ans}`).classList.add("wrong");
+      b.className="badge ko";
+      b.textContent=(ans<0?"✗ Chưa trả lời":"✗ Sai")+" — Đáp án đúng: "+L[q.k]+". "+q.o[q.k];
+    }
+  });
+  $("submit").classList.add("hidden");
+  const r=$("result");
+  r.classList.remove("hidden");
+  r.innerHTML=`${esc(name)}, kết quả của bạn:<br><span>${score}/${Q.length}</span> câu đúng`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("go").onclick=start;
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")start()});
+$("submit").onclick=submit;
+</script>
+</body>
+</html>
