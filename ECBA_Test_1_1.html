@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECBA Test 1</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1f2937;--mu:#6b7280;--pr:#2563eb;--ok:#16a34a;--okb:#dcfce7;--ko:#dc2626;--kob:#fee2e2;--bd:#e5e7eb}
+@media(prefers-color-scheme:dark){:root{--bg:#111827;--card:#1f2937;--tx:#f3f4f6;--mu:#9ca3af;--bd:#374151;--okb:#14532d;--kob:#7f1d1d}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+header{background:var(--pr);color:#fff;text-align:center;padding:22px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:1.5rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+main{max-width:760px;margin:0 auto;padding:20px 14px 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:16px}
+.start{text-align:center;margin-top:40px}
+input[type=text]{width:100%;max-width:340px;padding:11px 14px;font-size:1rem;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+button{background:var(--pr);color:#fff;border:0;border-radius:8px;padding:11px 26px;font-size:1rem;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.err{color:var(--ko);font-size:.9rem;min-height:1.3em;margin-top:6px}
+.q{font-weight:600;margin:0 0 12px}
+.q small{color:var(--mu);font-weight:500}
+label.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer}
+label.opt:hover{border-color:var(--pr)}
+label.opt input{margin-top:4px}
+.done label.opt{cursor:default}
+.opt.correct{background:var(--okb);border-color:var(--ok)}
+.opt.wrong{background:var(--kob);border-color:var(--ko)}
+.badge{font-weight:700;margin-top:6px;font-size:.95rem}
+.badge.ok{color:var(--ok)}.badge.ko{color:var(--ko)}
+.result{text-align:center;font-size:1.3rem;font-weight:700}
+.result span{color:var(--pr);font-size:1.9rem}
+.exp{margin-top:10px;padding:12px;border-left:4px solid var(--pr);background:var(--bg);border-radius:6px;font-size:.93rem}
+.exp p{margin:0 0 8px}.exp p:last-child{margin:0}
+.exp .t{font-weight:700;color:var(--pr)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1>ECBA Test 1</h1><p id="who"></p></header>
+<main>
+  <section id="start" class="card start">
+    <h2>Nhập tên của bạn để bắt đầu</h2>
+    <input id="name" type="text" placeholder="Họ và tên" autocomplete="name">
+    <div class="err" id="err"></div>
+    <button id="go">Bắt đầu làm bài</button>
+  </section>
+  <section id="quiz" class="hidden">
+    <div id="result" class="card result hidden"></div>
+    <div id="list"></div>
+    <div style="text-align:center"><button id="submit">Nộp bài</button></div>
+  </section>
+</main>
+<script>
+const Q=[{"q": "A business analyst is verifying the requirements for a new software system. The analyst is focusing on ensuring that the requirements and designs meet quality standards. What is the main purpose of this activity?", "o": ["To design new solutions for the business", "To rank requirements according to their importance", "To ensure that requirements and designs meet quality standards", "To identify problematic requirements during requirements communication"], "k": 2, "e": ["In business analysis, the main purpose of verifying requirements is to ensure that the requirements and designs meet quality standards. This activity involves checking the requirements for completeness, consistency, clarity, and other quality criteria. By doing so, the business analyst can ensure that the requirements are of high quality and can be effectively used in the design and implementation of the solution.", "Option 1: Designing new solutions for the business is not the main purpose of verifying requirements. While the requirements may inform the design of the solution, the main purpose of verification is to ensure the quality of the requirements, not to create new designs.", "Option 3: Identifying problematic requirements during requirements communication is not the main purpose of verifying requirements. While problematic requirements may be identified during verification, the main purpose is to ensure the quality of the requirements.", "Option 4: Ranking requirements according to their importance is not the main purpose of verifying requirements. While the importance of requirements may be considered during verification, the main purpose is to ensure the quality of the requirements."]}, {"q": "What happens when either the number of requirements or level of formality increase?", "o": ["More effort is needed to trace requirements.", "Rejecting requirements is likely to increase.", "Developing new requirements becomes difficult.", "More time is required to complete the project."], "k": 0, "e": ["When the number of requirements or the level of formality increases, more effort is needed to trace and manage requirements, ensuring they align with business needs."]}, {"q": "A software development team is considering implementing a new automated tool to simplify their workflow. In the context of identifying improvement opportunities, what does 'Increase Efficiencies' refer to in this scenario?", "o": ["Automating or simplifying the work the team performs", "Hiring more staff to handle the increased workload", "Purchasing the most expensive tool to ensure the highest quality", "Providing the team with training on how to use the new tool"], "k": 0, "e": ["In this context, 'Increase Efficiencies' refers to making the work process more efficient, either by automating certain tasks or by simplifying the tasks that the team needs to perform. By implementing a new tool that can automate or simplify their work, the team can increase their efficiency, thereby improving their productivity and reducing the time and effort required to complete their tasks.", "Option 1: While providing training can help the team use the new tool more effectively, it does not directly contribute to increasing efficiencies in the work process.", "Option 3: The cost of a tool does not necessarily correlate with its ability to increase efficiencies. A less expensive tool could potentially be more effective at automating or simplifying the team's work.", "Option 4: Hiring more staff could potentially increase productivity, but it does not necessarily increase efficiency. The goal is to improve the work process, not just increase the amount of work that can be done."]}, {"q": "Your company is developing a new software application. As a business analyst, you are tasked with analyzing the potential value of this project. You decide to use functional decomposition. What is your main purpose for using this technique?", "o": ["To define the user interface for the software application", "To map the flow of information between systems", "To perform a costbenefit analysis of the project", "To divide a large function into smaller, manageable parts"], "k": 3, "e": ["Functional decomposition is a technique used in business analysis to break down a large function into smaller, manageable parts. This allows the analyst to better understand the function and its components, which can be particularly useful when trying to determine the potential value of a project. By understanding all of the components of a function, the analyst can more accurately estimate the resources needed for the project, which can help in the costbenefit analysis.", "Option 1: While a costbenefit analysis is an important part of business analysis, it is not the primary reason for using functional decomposition. Functional decomposition is used to better understand a function by breaking it down into smaller parts, not to perform a costbenefit analysis.", "Option 2: Mapping the flow of information between systems is another task that may be performed during business analysis, but it is not the main purpose of functional decomposition. Functional decomposition is used to break down a large function into smaller parts, not to map information flow.", "Option 3: Defining the user interface for a software application is a task that may be performed during business analysis, but it is not the main purpose of functional decomposition. Functional decomposition is used to break down a large function into smaller parts, not to define user interfaces."]}, {"q": "What is the purpose of comparing the results collected through elicitation activities?", "o": ["Validate sufficient information was collected", "Confirm that the information is consistent and accurately represented", "Classify and organize the results", "Ensure that information produced is recorded for later reference use"], "k": 1, "e": ["Comparing the results collected through elicitation activities is done to ensure that the information is consistent, accurate, and aligned with stakeholder needs and expectations. It helps confirm the quality and reliability of the gathered information."]}, {"q": "Which of the following activities are performed during the requirements life cycle management phase?", "o": ["Prioritize Designs", "Elicit Requirements", "Maintain Attributes", "Trace Requirements"], "k": 3, "e": ["One of the activities performed during the requirements life cycle management phase is tracing requirements. This involves tracking and managing changes to requirements throughout the project."]}, {"q": "Which behavioural characteristic enables the business analyst (BA) to establish credibility by ensuring that business analysis efforts meet theneeds of the business?", "o": ["Ethics", "Personal Accountability", "Trustworthiness", "Adaptability"], "k": 1, "e": ["Personal accountability ensures that the BA takes responsibility for their work, delivers on commitments, and ensures business analysis efforts meet business needs, thereby establishing credibility."]}, {"q": "You are a business analyst working on a new software development project. The project has a tight deadline and limited resources. You are in the process of prioritizing requirements. Which of the following is a challenge you are most likely to encounter?", "o": ["Difficulty in obtaining stakeholder consensus on the importance of requirements", "The ease of implementing requirements", "The limited availability of resources for implementation", "The abundance of regulatory constraints"], "k": 0, "e": ["Prioritizing requirements is a complex process that involves various stakeholders. One of the main challenges is reaching consensus among stakeholders on the importance of each requirement. This is because different stakeholders may have different views on what is important based on their individual perspectives and interests. This can make it difficult to determine which requirements should be prioritized over others.", "Option 2: The ease of implementing requirements is not typically a challenge in prioritization. It is more of a consideration in the process of determining which requirements to implement.", "Option 3: While regulatory constraints can affect the implementation of requirements, they are not typically a challenge in the prioritization of requirements.", "Option 4: Limited resources can make implementation challenging, but it is not a direct challenge in the prioritization of requirements. Resources are considered during the implementation phase, after prioritization has occurred."]}, {"q": "If a stakeholder is looking to understand the logistics and scope of each of the elicitation activities, a business analyst (BA) would share the:", "o": ["elicitation results (unconfirmed).", "stakeholder engagement approach.", "elicitation activity plan.", "elicitation results (confirmed)."], "k": 2, "e": ["To help a stakeholder understand the logistics and scope of elicitation activities, the business analyst would share the \"Elicitation Activity Plan.\" This plan outlines the activities to be conducted and provides details about how they will be executed."]}, {"q": "You are a business analyst working on a new software development project. The project manager has asked you to allocate the requirements to the appropriate solution components. What is the primary goal of this task?", "o": ["To identify additional capabilities", "To assign requirements to solution components", "To prioritize the requirements", "To trace the requirements"], "k": 1, "e": ["The primary goal of requirements allocation is to assign requirements to solution components. This is a critical step in the requirements analysis and design definition process, as it ensures that each requirement is appropriately addressed in the solution design. It also helps to identify any gaps in the solution and to ensure that all necessary functionality is included in the final product.", "Option 1: Identifying additional capabilities is not the primary goal of requirements allocation. While this may occur during the process, the main focus is on assigning the existing requirements to the appropriate solution components.", "Option 2: Tracing requirements is an important part of requirements management and communication, but it is not the main goal of requirements allocation. Requirements traceability helps to ensure that all requirements are met and that changes to requirements are properly managed, but it does not involve assigning requirements to solution components.", "Option 4: Prioritizing requirements is a critical part of the requirements elicitation and collaboration process, but it is not the main goal of requirements allocation. Prioritization helps to determine which requirements are most important and should be addressed first, but it does not involve assigning requirements to solution components."]}];
+const L="ABCDEFGH";
+const $=id=>document.getElementById(id);
+let name="";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function start(){
+  name=$("name").value.trim();
+  if(!name){$("err").textContent="Vui lòng nhập tên trước khi làm bài.";return}
+  $("who").textContent="Người làm bài: "+name;
+  $("start").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  render();
+}
+function render(){
+  $("list").innerHTML=Q.map((q,i)=>`
+    <div class="card" id="c${i}">
+      <p class="q"><small>Câu ${i+1}/${Q.length}</small><br>${esc(q.q)}</p>
+      ${q.o.map((o,j)=>`<label class="opt" id="o${i}_${j}"><input type="radio" name="q${i}" value="${j}"><span><b>${L[j]}.</b> ${esc(o)}</span></label>`).join("")}
+      <div class="badge" id="b${i}"></div><div id="e${i}"></div>
+    </div>`).join("");
+}
+function submit(){
+  let score=0;
+  Q.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name=q${i}]:checked`);
+    const ans=sel?+sel.value:-1;
+    document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.disabled=true);
+    $("c"+i).classList.add("done");
+    $(`o${i}_${q.k}`).classList.add("correct");
+    $("e"+i).innerHTML=`<div class="exp"><p class="t">Giải thích</p>${q.e.map(x=>`<p>${esc(x)}</p>`).join("")}</div>`;
+    const b=$("b"+i);
+    if(ans===q.k){score++;b.className="badge ok";b.textContent="✓ Đúng"}
+    else{
+      if(ans>=0)$(`o${i}_${ans}`).classList.add("wrong");
+      b.className="badge ko";
+      b.textContent=(ans<0?"✗ Chưa trả lời":"✗ Sai")+" — Đáp án đúng: "+L[q.k]+". "+q.o[q.k];
+    }
+  });
+  $("submit").classList.add("hidden");
+  const r=$("result");
+  r.classList.remove("hidden");
+  r.innerHTML=`${esc(name)}, kết quả của bạn:<br><span>${score}/${Q.length}</span> câu đúng`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("go").onclick=start;
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")start()});
+$("submit").onclick=submit;
+</script>
+</body>
+</html>
