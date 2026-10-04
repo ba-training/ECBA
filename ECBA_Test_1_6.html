@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECBA Test 6</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1f2937;--mu:#6b7280;--pr:#2563eb;--ok:#16a34a;--okb:#dcfce7;--ko:#dc2626;--kob:#fee2e2;--bd:#e5e7eb}
+@media(prefers-color-scheme:dark){:root{--bg:#111827;--card:#1f2937;--tx:#f3f4f6;--mu:#9ca3af;--bd:#374151;--okb:#14532d;--kob:#7f1d1d}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+header{background:var(--pr);color:#fff;text-align:center;padding:22px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:1.5rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+main{max-width:760px;margin:0 auto;padding:20px 14px 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:16px}
+.start{text-align:center;margin-top:40px}
+input[type=text]{width:100%;max-width:340px;padding:11px 14px;font-size:1rem;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+button{background:var(--pr);color:#fff;border:0;border-radius:8px;padding:11px 26px;font-size:1rem;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.err{color:var(--ko);font-size:.9rem;min-height:1.3em;margin-top:6px}
+.q{font-weight:600;margin:0 0 12px}
+.q small{color:var(--mu);font-weight:500}
+label.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer}
+label.opt:hover{border-color:var(--pr)}
+label.opt input{margin-top:4px}
+.done label.opt{cursor:default}
+.opt.correct{background:var(--okb);border-color:var(--ok)}
+.opt.wrong{background:var(--kob);border-color:var(--ko)}
+.badge{font-weight:700;margin-top:6px;font-size:.95rem}
+.badge.ok{color:var(--ok)}.badge.ko{color:var(--ko)}
+.result{text-align:center;font-size:1.3rem;font-weight:700}
+.result span{color:var(--pr);font-size:1.9rem}
+.exp{margin-top:10px;padding:12px;border-left:4px solid var(--pr);background:var(--bg);border-radius:6px;font-size:.93rem}
+.exp p{margin:0 0 8px}.exp p:last-child{margin:0}
+.exp .t{font-weight:700;color:var(--pr)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1>ECBA Test 6</h1><p id="who"></p></header>
+<main>
+  <section id="start" class="card start">
+    <h2>Nhập tên của bạn để bắt đầu</h2>
+    <input id="name" type="text" placeholder="Họ và tên" autocomplete="name">
+    <div class="err" id="err"></div>
+    <button id="go">Bắt đầu làm bài</button>
+  </section>
+  <section id="quiz" class="hidden">
+    <div id="result" class="card result hidden"></div>
+    <div id="list"></div>
+    <div style="text-align:center"><button id="submit">Nộp bài</button></div>
+  </section>
+</main>
+<script>
+const Q=[{"q": "What is the purpose of brainstorming?", "o": ["To receive feedback on a design or prototype", "To improve stakeholder collaboration", "To produce numerous new ideas", "To collaboratively choose a final design"], "k": 2, "e": ["The purpose of brainstorming is to generate a large number of new ideas or solutions to a problem or challenge. It's a creative technique for idea generation."]}, {"q": "When creating a use case diagram which of the following relationships may a business analyst (BA) use?", "o": ["Extend, enhance", "Allow, prevent", "Extend, include", "Output, input"], "k": 2, "e": ["In a use case diagram, a business analyst may use the relationships \"Extend\" and \"Include\" to represent different interactions between use cases. \"Include\" indicates that one use case includes the behavior of another, and \"Extend\" indicates that one use case can be extended by another."]}, {"q": "You are a business analyst working on a project to implement a new software system. During the requirements gathering process, you have identified several conflicting requirements. Which BABOK v3 task would guide you in resolving these conflicts and ensuring the requirements are approved?", "o": ["Manage Solution Scope and Requirements", "Conduct Stakeholder Analysis", "Analyze Potential Value and Recommend Solution", "Plan Business Analysis Governance"], "k": 2, "e": ["The correct answer is 'Analyze Potential Value and Recommend Solution'. This task in BABOK v3 Chapter 7 ('Requirements Analysis and Design Definition') guides the business analyst in assessing the potential value that can be delivered by different solutions and making recommendations based on this analysis. This includes resolving conflicting requirements and ensuring they are approved. The business analyst would typically use techniques such as decision analysis, risk analysis, and costbenefit analysis to perform this task.", "Option 1: 'Conduct Stakeholder Analysis' is incorrect because this task is more about identifying who the stakeholders are and understanding their needs, interests, and influence. It does not directly involve resolving conflicts in requirements or approving them.", "Option 2: 'Plan Business Analysis Governance' is incorrect because this task involves setting up the decisionmaking framework for business analysis work. While it may indirectly help resolve conflicts in requirements, it does not directly involve this activity.", "Option 3: 'Manage Solution Scope and Requirements' is incorrect because this task is more about managing changes to the solution scope and requirements, rather than resolving conflicts in requirements or approving them."]}, {"q": "In which task would the business analyst (BA) engage the stakeholders to help them support change?", "o": ["Plan change strategy", "Manage stakeholder collaboration", "Plan business analysis approach", "Conduct elicitation"], "k": 1, "e": ["The Manage Stakeholder Collaboration task involves engaging stakeholders to gain their support for change, ensuring their involvement, addressing concerns, and fostering collaboration throughout the business analysis process."]}, {"q": "What are the participant roles in reviews?", "o": ["Author, reviewer, facilitator, scribe", "Customer, supplier, end user, business analyst", "Domain SME, regulator, sponsor, project manager", "Approver, administrator, reviewer, tester"], "k": 0, "e": ["Participant roles in reviews typically include the author of the work being reviewed, reviewers, a facilitator to guide the review, and a scribe to document the review process."]}, {"q": "As a business analyst, you are preparing a decision model for a new project. Which of the following is not typically a component of a decision model?", "o": ["Input data", "Interface design", "Decision rules", "Possible outcomes"], "k": 1, "e": ["In business analysis, a decision model typically includes decision rules, possible outcomes, and input data. These components are used to evaluate the potential options and make the best decision for the business. Interface design, however, is not typically a component of a decision model. It is more related to the design of the system or application that will be used to implement the decision, rather than the decisionmaking process itself.", "Option 2: Decision rules are a key component of a decision model. They define the criteria that will be used to evaluate the potential options.", "Option 3: Possible outcomes are another key component of a decision model. They represent the potential results of each decision option.", "Option 4: Input data is also a crucial component of a decision model. It provides the information that will be used in the decisionmaking process."]}, {"q": "The process of assigning requirements to solution components and releases to best achieve the objectives is called:", "o": ["requirements allocation.", "requirements classification schema.", "requirements architecture.", "requirements traceability."], "k": 0, "e": ["Requirements allocation is the process of assigning requirements to solution components and releases to best achieve the project's objectives."]}, {"q": "As a business analyst, you are monitoring stakeholder collaboration in a project. The project is focused on developing a new software application. What positive outcome can be expected from effectively monitoring stakeholder engagement in this process?", "o": ["Elicitation activities providing the quality of business analysis information required.", "Delayed approvals.", "None of the above.", "Diversion of stakeholders to other work."], "k": 0, "e": ["Monitoring stakeholder engagement effectively ensures that the elicitation activities provide the quality of business analysis information required. This is because the stakeholders are the ones who provide this information, and their engagement ensures that they provide the necessary information at the right time and in the right manner. This helps in making sure that the project is on the right track and that the software application being developed meets the needs and requirements of the stakeholders.", "Option 2: Diversion of stakeholders to other work is not a positive outcome of effectively monitoring stakeholder engagement. On the contrary, it can lead to delays and miscommunication in the project.", "Option 3: Delayed approvals are not a positive outcome of effectively monitoring stakeholder engagement. In fact, effective stakeholder engagement should lead to timely approvals as the stakeholders are more involved and informed about the project.", "Option 4: The correct answer is not 'None of the above'. The positive outcome of effectively monitoring stakeholder engagement is that the elicitation activities provide the quality of business analysis information required."]}, {"q": "Your organization is in the process of developing a new software product. As a business analyst, you are tasked with ensuring that the product's requirements and designs align with the organization's technological capabilities and standards. Which of the following would be the most effective approach to ensure this alignment?", "o": ["Develop requirements in isolation and then ask the technical team to implement them.", "Rely solely on the technical team's feedback and adjust requirements based on their input.", "Delegate the responsibility of requirement and design alignment to the project manager.", "Collaborate closely with the technical team throughout the requirement and design phases to ensure alignment with technological capabilities and standards."], "k": 3, "e": ["The correct answer is Option 3. As a business analyst, collaborating closely with the technical team throughout the requirement and design phases is crucial to ensuring alignment with technological capabilities and standards. This approach allows for continuous feedback and adjustments, ensuring that the final product meets both business needs and technical feasibility. It also helps to avoid potential rework or delays that can occur when technical constraints are not considered in the early stages of requirement and design development.", "Option 1: Relying solely on the technical team's feedback without active collaboration (Option 1) can lead to miscommunications and misalignments between business needs and technical capabilities.", "Option 2: Developing requirements in isolation (Option 2) can lead to requirements that are not technically feasible or do not align with the organization's technological standards.", "Option 4: While the project manager plays an important role in coordinating project activities, it is not typically their responsibility to ensure the alignment of requirements and designs with technological capabilities and standards (Option 4). This is usually the role of the business analyst in collaboration with the technical team."]}, {"q": "Which element closely describes a business analyst (BA) continually tracking risks for delayed approvals?", "o": ["Collaborate assigned tasks", "Guide elicitation activity", "Monitor stakeholder engagement", "Communicate business analysis package"], "k": 2, "e": ["Monitoring stakeholder engagement involves tracking and managing stakeholderrelated issues and concerns, including risks associated with delays in approvals. It ensures that stakeholder engagement is effective and that the project stays on track."]}];
+const L="ABCDEFGH";
+const $=id=>document.getElementById(id);
+let name="";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function start(){
+  name=$("name").value.trim();
+  if(!name){$("err").textContent="Vui lòng nhập tên trước khi làm bài.";return}
+  $("who").textContent="Người làm bài: "+name;
+  $("start").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  render();
+}
+function render(){
+  $("list").innerHTML=Q.map((q,i)=>`
+    <div class="card" id="c${i}">
+      <p class="q"><small>Câu ${i+1}/${Q.length}</small><br>${esc(q.q)}</p>
+      ${q.o.map((o,j)=>`<label class="opt" id="o${i}_${j}"><input type="radio" name="q${i}" value="${j}"><span><b>${L[j]}.</b> ${esc(o)}</span></label>`).join("")}
+      <div class="badge" id="b${i}"></div><div id="e${i}"></div>
+    </div>`).join("");
+}
+function submit(){
+  let score=0;
+  Q.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name=q${i}]:checked`);
+    const ans=sel?+sel.value:-1;
+    document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.disabled=true);
+    $("c"+i).classList.add("done");
+    $(`o${i}_${q.k}`).classList.add("correct");
+    $("e"+i).innerHTML=`<div class="exp"><p class="t">Giải thích</p>${q.e.map(x=>`<p>${esc(x)}</p>`).join("")}</div>`;
+    const b=$("b"+i);
+    if(ans===q.k){score++;b.className="badge ok";b.textContent="✓ Đúng"}
+    else{
+      if(ans>=0)$(`o${i}_${ans}`).classList.add("wrong");
+      b.className="badge ko";
+      b.textContent=(ans<0?"✗ Chưa trả lời":"✗ Sai")+" — Đáp án đúng: "+L[q.k]+". "+q.o[q.k];
+    }
+  });
+  $("submit").classList.add("hidden");
+  const r=$("result");
+  r.classList.remove("hidden");
+  r.innerHTML=`${esc(name)}, kết quả của bạn:<br><span>${score}/${Q.length}</span> câu đúng`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("go").onclick=start;
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")start()});
+$("submit").onclick=submit;
+</script>
+</body>
+</html>
