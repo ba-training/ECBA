@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bài thi ECBA – Test 1 (Phần 2)</title>
+<style>
+:root{--bg:#f3f5f9;--card:#fff;--ink:#1b2433;--muted:#5d6879;--line:#d8dee9;--accent:#1f4fbf;--ok:#17703f;--ok-bg:#e6f5ec;--bad:#b3261e;--bad-bg:#fdeceb;--warn:#8a5a00;--warn-bg:#fff4dc}
+@media (prefers-color-scheme:dark){:root{--bg:#12161d;--card:#1b212b;--ink:#e8ecf3;--muted:#9aa5b8;--line:#2c3441;--accent:#7ea2ff;--ok:#5fd08d;--ok-bg:#12301f;--bad:#ff8a80;--bad-bg:#3a1a18;--warn:#f0c15a;--warn-bg:#33290f}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--accent);color:#fff;padding:22px 16px;text-align:center}
+@media (prefers-color-scheme:dark){header{color:#0d1220}}
+header h1{margin:0;font-size:clamp(1.3rem,4vw,1.9rem);letter-spacing:.2px}
+main{max-width:760px;margin:0 auto;padding:20px 14px 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px;margin-bottom:16px}
+.start{text-align:center;margin-top:30px}
+.start label{display:block;font-weight:600;margin-bottom:10px}
+input[type=text]{width:100%;max-width:360px;padding:11px 12px;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px}
+button{font:inherit;font-weight:600;background:var(--accent);color:#fff;border:0;border-radius:8px;padding:11px 26px;cursor:pointer}
+@media (prefers-color-scheme:dark){button{color:#0d1220}}
+button:disabled{opacity:.5;cursor:not-allowed}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.err{color:var(--bad);min-height:1.5em;margin:8px 0 0}
+.who{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;color:var(--muted);margin-bottom:14px}
+.q-text{margin:0 0 12px;font-weight:600}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px;cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt input{margin-top:5px}
+.opt b{min-width:1.2em}
+.locked .opt{cursor:default}
+.opt.correct{background:var(--ok-bg);border-color:var(--ok)}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.tag{display:inline-block;font-size:.85rem;font-weight:700;padding:2px 10px;border-radius:99px;margin-left:8px;vertical-align:middle}
+.tag.ok{background:var(--ok-bg);color:var(--ok)}.tag.bad{background:var(--bad-bg);color:var(--bad)}.tag.none{background:var(--warn-bg);color:var(--warn)}
+.expl{margin-top:14px;padding:12px 14px;border-left:4px solid var(--accent);background:var(--bg);border-radius:0 8px 8px 0}
+.expl p{margin:0 0 8px}.expl p:last-child{margin:0}
+.expl .ans{font-weight:700}
+.submit-row{text-align:center;margin-top:8px}
+.submit-row small{display:block;margin-top:8px;color:var(--muted)}
+.result{text-align:center;border:2px solid var(--accent)}
+.result .score{font-size:2.2rem;font-weight:800;line-height:1.2}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1 id="title">Bài thi ECBA – Test 1 (Phần 2)</h1></header>
+<main>
+  <section id="start" class="card start">
+    <label for="name">Nhập họ tên của bạn để bắt đầu làm bài</label>
+    <input id="name" type="text" maxlength="80" autocomplete="name" placeholder="Họ và tên">
+    <p class="err" id="nameErr" role="alert"></p>
+    <button id="startBtn" type="button">Bắt đầu làm bài</button>
+  </section>
+
+  <section id="quiz" class="hidden">
+    <div id="result" class="card result hidden" aria-live="polite"></div>
+    <div class="who"><span>Người làm: <strong id="who"></strong></span><span id="progress"></span></div>
+    <div id="list"></div>
+    <div class="submit-row" id="submitRow">
+      <button id="submitBtn" type="button">Nộp bài</button>
+      <small>Bạn có thể nộp bài ngay cả khi chưa trả lời hết các câu. Câu bỏ trống sẽ tính là chưa đúng.</small>
+    </div>
+  </section>
+</main>
+
+<script>
+const QUESTIONS = [{"n": 11, "q": "You are a business analyst working on a project with several stakeholders with different interests and priorities. In order to maximize the value of the project, you need to manage stakeholder collaboration. According to BABOK® v3, what is the primary purpose of managing this collaboration?", "o": ["To encourage stakeholders to work towards a common goal", "To ensure that all stakeholders are equally important", "To improve the profitability of the business", "To prevent any conflicts among stakeholders"], "a": 0, "e": ["According to BABOK® v3, the primary purpose of managing stakeholder collaboration is to encourage stakeholders to work towards a common goal. This is critical in ensuring that all stakeholders are aligned and working together to deliver the best possible outcome for the project. This does not necessarily mean that all stakeholders are equally important or that the goal is to prevent any conflicts among stakeholders. While these can be beneficial outcomes of effective stakeholder management, they are not the primary purpose.", "Option 1: While it is important to respect and consider the interests of all stakeholders, this does not mean they are all equally important. The importance of a stakeholder is often determined by their influence on the project, their interest in the project's outcome, and their ability to affect the project's success.", "Option 2: While preventing conflicts among stakeholders can be a beneficial outcome of effective stakeholder management, it is not the primary purpose. It is almost inevitable that conflicts will arise among stakeholders, especially in complex projects with multiple stakeholders. The key is to manage these conflicts in a way that they do not impede the progress of the project.", "Option 4: Improving the profitability of the business can be a potential outcome of a project but it is not the primary purpose of managing stakeholder collaboration. The main objective is to align stakeholders towards a common goal to ensure the successful delivery of the project."]}, {"n": 12, "q": "As a Business Analyst at XYZ Corporation, you are assessing a proposed change in the company's product line. According to BABOK® v3, which of the following should be your primary consideration?", "o": ["The geographical location of the business", "The financial capacity of the business", "The potential effect of the change to solution value", "The personal views of the stakeholders"], "a": 2, "e": ["According to the BABOK® v3, a Business Analyst's primary consideration when assessing a proposed change should be the potential effect of the change to solution value. This includes understanding how the change might impact the overall business objectives, the costs and benefits of the change, and the potential risks associated with the change.", "Option 1: While the financial capacity of the business is important, it is not the primary consideration according to BABOK® v3 when assessing a proposed change. The potential effect of the change to solution value takes precedence.", "Option 2: Although the personal views of stakeholders can provide valuable insights, they are not the primary consideration according to BABOK® v3 when assessing a proposed change. The potential effect of the change to solution value is more important.", "Option 3: The geographical location of the business, while potentially important in some contexts, is not the primary consideration according to BABOK® v3 when assessing a proposed change. The potential effect of the change to solution value is more crucial."]}, {"n": 13, "q": "In the context of a new customer relationship management (CRM) system implementation, what would 'People and Roles' models primarily illustrate?", "o": ["They illustrate the reasons for implementing the CRM system.", "They illustrate the exchange of information within the enterprise due to the CRM system.", "They illustrate the sequence of actions required to implement the CRM system.", "They illustrate the organizations, groups of people, roles, and their relationships within the enterprise and to the CRM solution."], "a": 3, "e": ["In the context of a CRM system implementation, 'People and Roles' models primarily illustrate the organizations, groups of people, roles, and their relationships within the enterprise and to the CRM solution. This includes both internal and external roles, such as users, stakeholders, and customers, as well as their responsibilities and interactions with the CRM system. It is crucial to understand these relationships to ensure effective communication and collaboration, which are key to successful CRM implementation.", "Option 1: This option is incorrect as it describes the process or sequence of actions, which is typically represented in process models, not 'People and Roles' models.", "Option 3: This option is incorrect as it describes the reasons or motivations for change, which is typically represented in business case or strategy models, not 'People and Roles' models.", "Option 4: This option is incorrect as it describes the exchange of information, which is typically represented in data or communication flow models, not 'People and Roles' models."]}, {"n": 14, "q": "During the 'Analyze Potential Value and Recommend Solution' process, the project team has identified several potential solutions. Which of the following team members would not typically be involved in evaluating these solutions for their potential value?", "o": ["Office Receptionist", "Project Sponsor", "Solution Architect", "Business Analyst"], "a": 0, "e": ["The Office Receptionist would not typically be involved in the evaluation of potential solutions for their value. This process is typically undertaken by team members with a deep understanding of the business needs and the potential impact of the solutions, such as the Project Sponsor, Business Analyst, and Solution Architect.", "Option 1: The Project Sponsor is typically involved in the evaluation of potential solutions. They have a highlevel view of the project and its objectives, and can therefore provide valuable input on the potential value of different solutions.", "Option 2: The Business Analyst plays a key role in evaluating potential solutions. They have a deep understanding of the business needs and requirements, and can therefore assess how well each solution meets these needs.", "Option 3: The Solution Architect is typically involved in the evaluation of potential solutions. They have a deep understanding of the technical aspects of the solutions, and can therefore assess their feasibility and potential value."]}, {"n": 15, "q": "As a business analyst, you are working with stakeholders to confirm the elicitation results for a new software project. What is the primary reason for this collaboration?", "o": ["To ensure consistency in the elicitation process", "To compare results against source information", "To resolve conflicts and ambiguity in the software requirements", "To capture additional detailed information about the software"], "a": 0, "e": ["Collaboration with stakeholders is crucial to ensure consistency in the elicitation process. This is because stakeholders can provide valuable insights and feedback that can help the business analyst understand the needs and expectations of the business. By working closely with stakeholders, the business analyst can ensure that the elicitation results accurately reflect the business requirements.", "Option 1: While resolving conflicts and ambiguity is an important part of the elicitation process, it is not the primary reason for collaborating with stakeholders. The main purpose of collaboration is to ensure consistency in the elicitation process.", "Option 3: Capturing additional detailed information is a benefit of collaborating with stakeholders, but it is not the primary reason. The main goal is to ensure consistency in the elicitation process.", "Option 4: Comparing results against source information is a validation activity that might not necessarily require collaboration with stakeholders. The primary reason for collaboration is to ensure consistency in the elicitation process."]}, {"n": 16, "q": "In prioritizing requirements, which of the following factors include difficulty of implementing a requirement, or the likelihood that a requirementcannot deliver its potential value?", "o": ["Cost", "Risk", "Dependency", "Penalty"], "a": 1, "e": ["When prioritizing requirements, the factor that includes the difficulty of implementing a requirement or the likelihood that a requirement may not deliver its potential value is \"Risk.\" Identifying and assessing risks is crucial in prioritizing requirements to ensure successful implementation."]}, {"n": 17, "q": "During a project, the client has proposed a change in the requirements. The project team has already conducted a change assessment. Who in the project team would be most appropriate to review the change assessment to determine if additional work is needed for a successful solution implementation?", "o": ["Project Manager", "Tester", "End User", "Business Analyst"], "a": 0, "e": ["The Project Manager is the correct answer. The Project Manager is typically responsible for reviewing change assessments and making decisions about the need for additional work in project. They would review the change assessment in order to understand the impact of the proposed change, including any additional work that might be required for successful solution implementation.", "Option 1: The Tester's main role is to test the solution against the requirements. They may be involved in assessing the impact of a change on the testing process, but they would not typically be responsible for reviewing the change assessment to determine if more work is needed for solution implementation.", "Option 2: The Business Analyst may be involved in conducting the change assessment and communicating the impact of the change to stakeholders, but the decision about the need for additional work typically falls to the Project Manager.", "Option 4: The End User is typically a stakeholder who uses the final product. While they may propose changes and provide feedback on the solution, they would not typically be involved in reviewing the change assessment to determine if more work is needed."]}, {"n": 18, "q": "What inputs are required to assess business analysis work and to plan to improve processes?", "o": ["Business analysis performance assessment and performance objectives", "Business analysis approach and performance objectives (external)", "Business analysis approach and key performance objectives (internal)", "Business analysis approach and metrics and key performance indicators (KPIs)"], "a": 1, "e": ["By combining the business analysis approach with external performance objectives, the business analyst can assess how well the chosen approach aligns with external expectations and adjust the strategy as needed. This approach helps in planning and executing business analysis activities effectively."]}, {"n": 19, "q": "Your project team is working on the development of a new software product. However, the team is experiencing difficulties in managing changes in requirements and making decisions about the project. As a business analyst, which guidance from BABOK v3 would you refer to in order to address these issues?", "o": ["Governance Approach", "Legal/Regulatory Information", "Domain Knowledge", "Change Strategy"], "a": 0, "e": ["The Governance Approach is the correct answer because it provides guidance on how to manage changes and make decisions about business analysis work. The Governance Approach outlines who has the authority to approve changes, how decisions are made, and how changes are tracked and communicated. This can help the project team manage changes in requirements and make informed decisions about the project.", "Option 1: Change Strategy is not the correct answer because it refers to the approach for managing and implementing change in an organization, not specifically for managing changes in requirements and decisionmaking in a project.", "Option 3: Legal/Regulatory Information is not the correct answer because it refers to the legal and regulatory requirements that the project must comply with, not specifically for managing changes in requirements and decisionmaking in a project.", "Option 4: Domain Knowledge is not the correct answer because it refers to the knowledge about the specific area in which the project is being implemented, not specifically for managing changes in requirements and decisionmaking in a project."]}, {"n": 20, "q": "When determining the potential value of a solution, a business analyst (BA) should consider it from the point of view of the:", "o": ["business analyst.", "testing team.", "customer.", "development team."], "a": 2, "e": ["When determining the potential value of a solution, it's important to consider it from the point of view of the customer, as they are the ones who will ultimately benefit from the solution. This perspective is key to understanding the solution's value."]}];
+const L = ['A','B','C','D'];
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let userName = '', submitted = false;
+
+function startQuiz(){
+  const v = $('name').value.trim();
+  if(!v){ $('nameErr').textContent = 'Vui lòng nhập họ tên trước khi làm bài.'; $('name').focus(); return; }
+  userName = v;
+  $('who').textContent = v;
+  $('start').classList.add('hidden');
+  $('quiz').classList.remove('hidden');
+  render();
+  window.scrollTo(0,0);
+}
+
+function render(){
+  $('list').innerHTML = QUESTIONS.map((q,i) => `
+    <article class="card" id="card${i}">
+      <p class="q-text">Câu ${q.n}: ${esc(q.q)}<span id="tag${i}"></span></p>
+      ${q.o.map((o,j) => `
+        <label class="opt" id="opt${i}_${j}">
+          <input type="radio" name="q${i}" value="${j}">
+          <b>${L[j]}.</b><span>${esc(o)}</span>
+        </label>`).join('')}
+      <div class="expl hidden" id="expl${i}"></div>
+    </article>`).join('');
+  $('list').addEventListener('change', updateProgress);
+  updateProgress();
+}
+
+function updateProgress(){
+  const n = QUESTIONS.filter((q,i) => document.querySelector(`input[name=q${i}]:checked`)).length;
+  $('progress').textContent = submitted ? '' : `Đã trả lời ${n}/${QUESTIONS.length} câu`;
+}
+
+function submitQuiz(){
+  const unanswered = QUESTIONS.filter((q,i) => !document.querySelector(`input[name=q${i}]:checked`)).length;
+  if(unanswered && !confirm(`Bạn còn ${unanswered} câu chưa trả lời. Vẫn nộp bài?`)) return;
+  submitted = true;
+  let correct = 0;
+  QUESTIONS.forEach((q,i) => {
+    const sel = document.querySelector(`input[name=q${i}]:checked`);
+    const picked = sel ? +sel.value : -1;
+    const ok = picked === q.a;
+    if(ok) correct++;
+    document.querySelectorAll(`input[name=q${i}]`).forEach(r => r.disabled = true);
+    $('card'+i).classList.add('locked');
+    $(`opt${i}_${q.a}`).classList.add('correct');
+    if(picked >= 0 && !ok) $(`opt${i}_${picked}`).classList.add('wrong');
+    $('tag'+i).innerHTML = ok ? '<span class="tag ok">Đúng</span>'
+      : picked < 0 ? '<span class="tag none">Chưa trả lời</span>' : '<span class="tag bad">Sai</span>';
+    const e = $('expl'+i);
+    e.innerHTML = `<p class="ans">Đáp án đúng: ${L[q.a]}. ${esc(q.o[q.a])}</p>` + q.e.map(p => `<p>${esc(p)}</p>`).join('');
+    e.classList.remove('hidden');
+  });
+  $('result').innerHTML = `<div>${esc(userName)}</div><div class="score">${correct}/${QUESTIONS.length}</div><div>câu đúng trên tổng số câu</div>`;
+  $('result').classList.remove('hidden');
+  $('submitRow').classList.add('hidden');
+  updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+$('startBtn').addEventListener('click', startQuiz);
+$('name').addEventListener('keydown', e => { if(e.key==='Enter') startQuiz(); });
+$('submitBtn').addEventListener('click', submitQuiz);
+</script>
+</body>
+</html>
