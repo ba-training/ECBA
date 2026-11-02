@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECBA Test 2.9</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1f2937;--mu:#6b7280;--pr:#2563eb;--ok:#16a34a;--okb:#dcfce7;--ko:#dc2626;--kob:#fee2e2;--bd:#e5e7eb}
+@media(prefers-color-scheme:dark){:root{--bg:#111827;--card:#1f2937;--tx:#f3f4f6;--mu:#9ca3af;--bd:#374151;--okb:#14532d;--kob:#7f1d1d}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+header{background:var(--pr);color:#fff;text-align:center;padding:22px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:1.5rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+main{max-width:760px;margin:0 auto;padding:20px 14px 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:16px}
+.start{text-align:center;margin-top:40px}
+input[type=text]{width:100%;max-width:340px;padding:11px 14px;font-size:1rem;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+button{background:var(--pr);color:#fff;border:0;border-radius:8px;padding:11px 26px;font-size:1rem;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.err{color:var(--ko);font-size:.9rem;min-height:1.3em;margin-top:6px}
+.q{font-weight:600;margin:0 0 12px}
+.q small{color:var(--mu);font-weight:500}
+label.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer}
+label.opt:hover{border-color:var(--pr)}
+label.opt input{margin-top:4px}
+.done label.opt{cursor:default}
+.opt.correct{background:var(--okb);border-color:var(--ok)}
+.opt.wrong{background:var(--kob);border-color:var(--ko)}
+.badge{font-weight:700;margin-top:6px;font-size:.95rem}
+.badge.ok{color:var(--ok)}.badge.ko{color:var(--ko)}
+.result{text-align:center;font-size:1.3rem;font-weight:700}
+.result span{color:var(--pr);font-size:1.9rem}
+.exp{margin-top:10px;padding:12px;border-left:4px solid var(--pr);background:var(--bg);border-radius:6px;font-size:.93rem}
+.exp p{margin:0 0 8px}.exp p:last-child{margin:0}
+.exp .t{font-weight:700;color:var(--pr)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1>ECBA Test 2.9</h1><p id="who"></p></header>
+<main>
+  <section id="start" class="card start">
+    <h2>Nhập tên của bạn để bắt đầu</h2>
+    <input id="name" type="text" placeholder="Họ và tên" autocomplete="name">
+    <div class="err" id="err"></div>
+    <button id="go">Bắt đầu làm bài</button>
+  </section>
+  <section id="quiz" class="hidden">
+    <div id="result" class="card result hidden"></div>
+    <div id="list"></div>
+    <div style="text-align:center"><button id="submit">Nộp bài</button></div>
+  </section>
+</main>
+<script>
+const Q=[{"q": "What technique is used to elicit business analysis information, including contextual understanding and requirements, by examining availablematerials that describe either the business environment or existing organizational assets?", "o": ["Organizational modeling", "Data flow diagrams", "Document analysis", "Functional decomposition"], "k": 2, "e": ["Document analysis is the technique used to elicit business analysis information by examining available materials that describe the business environment or existing organizational assets."]}, {"q": "What are matrices in modelling formats used to describe?", "o": ["Detailed procedure flow", "Gaps in capability analysis", "Complex but uniform structures", "Hierarchical structure of stakeholders"], "k": 2, "e": ["Matrices in modeling formats are used to describe complex but uniform structures, such as relationships and connections between elements. They help organize and represent relationships in a structured way."]}, {"q": "As a business analyst working on a new software development project, you are tasked with analyzing potential value and recommending solutions. According to BABOK® v3, which of the following behavioral characteristics would be most beneficial to your role in this task?", "o": ["Personal accountability for the outcomes of your recommendations", "Extensive technical knowledge of software development", "Ability to think creatively and propose innovative solutions", "Ability to perform complex financial calculations"], "k": 0, "e": ["According to BABOK® v3, personal accountability is considered a core competency of behavioral characteristics for business analysts. This means taking responsibility for the outcomes of your actions and decisions, particularly when analyzing potential value and recommending solutions. This is crucial because the recommendations of a business analyst can significantly impact the project's success.", "Option 1: While financial understanding is important for a business analyst, the ability to perform complex financial calculations is not considered a core competency of behavioral characteristics.", "Option 2: Technical knowledge is beneficial for a business analyst, but it is not considered a core competency of behavioral characteristics. The focus is more on analytical and problemsolving skills rather than technical expertise.", "Option 3: Creativity can be beneficial in problemsolving, but it is not considered a core competency of behavioral characteristics for business analysts according to BABOK® v3."]}, {"q": "During the 'Analyze Potential Value and Recommend Solution' task, an analyst is preparing for elicitation. Which of the following would be the most appropriate use of business objectives in this scenario?", "o": ["To select the company's next CEO", "To plan and prepare elicitation events, and to develop supporting materials", "To decide on the company's next marketing campaign", "To determine the company's holiday schedule"], "k": 1, "e": ["Business objectives are used in the 'Prepare for Elicitation' process to guide the planning and preparation of elicitation events, and to develop supporting materials. These objectives provide a clear understanding of what the business aims to achieve, which in turn helps to focus the elicitation activities on gathering the most relevant and useful information.", "Option 2: Determining the company's holiday schedule is not typically a part of the 'Prepare for Elicitation' process. This is usually handled by HR or management, not by business analysts.", "Option 3: Deciding on the company's next marketing campaign may involve business objectives, but this is not part of the 'Prepare for Elicitation' process. Marketing strategies are typically developed by the marketing department.", "Option 4: Selecting the company's next CEO is a highlevel decision that is typically made by the board of directors or shareholders, not by business analysts. This is not a part of the 'Prepare for Elicitation' process."]}, {"q": "You are a business analyst working for a software company that is considering implementing a new feature. You are using decision analysis to help determine the best course of action. What is NOT a benefit of using decision analysis in this context?", "o": ["Reducing the risk of making a poor decision about the new feature.", "Improving understanding of the decisionmaking process among the project team.", "Eliminating the need for stakeholder engagement in the decisionmaking process.", "Providing a clear justification for the decision to implement the new feature or not."], "k": 2, "e": ["Using decision analysis in business analysis does not eliminate the need for stakeholder engagement. On the contrary, stakeholder engagement is crucial in the decision-making process. It provides valuable input, ensures buyin, and helps avoid potential resistance to the decision. Therefore, while decision analysis can provide a clear justification for decisions, improve understanding of the decision-making process, and reduce the risk of making a poor decision, it does not reduce the need for stakeholder engagement.", "Option 1: This is incorrect because providing a clear justification for decisions is indeed a benefit of using decision analysis.", "Option 2: This is incorrect because improving understanding of the decision-making process among the project team is indeed a benefit of using decision analysis.", "Option 3: This is incorrect because reducing the risk of making a poor decision is indeed a benefit of using decision analysis."]}, {"q": "As a business analyst, you are working on a project that involves analyzing the potential value of a proposed solution. You are considering several techniques to facilitate the reuse of requirements. Which of the following techniques is NOT typically used for this purpose?", "o": ["Data Modelling", "Functional Decomposition", "Business Rules Analysis", "Information Management Approach"], "k": 3, "e": ["The Information Management Approach is not typically used to facilitate the reuse of requirements. This approach is more commonly used to manage information resources, focusing on information access, information privacy, information governance, information quality, and data integration. While it is an important aspect of business analysis, it does not directly contribute to the reuse of requirements.Option Option1: Business Rules Analysis is a technique that can facilitate the reuse of requirements. It involves identifying, expressing, validating, refining, and interacting with business rules to understand an organization's operations.Option Option2: Functional Decomposition is a technique that can facilitate the reuse of requirements. It is a method of analysis that breaks down complex business processes or systems into their simpler, constituent parts.Option Option4: Data Modelling is a technique that can facilitate the reuse of requirements. It involves creating a visual representation of an organization's data and how it is related to other data."]}, {"q": "What is a valid reason for prioritization?", "o": ["Requirements which are of significant personal interest to a stakeholder", "Effort and resources needed to implement a requirement", "Development team's advice to implement easy requirements", "Sponsor's wishlist"], "k": 1, "e": ["Prioritization should be based on valid factors like the effort and resources needed to implement a requirement. Prioritization should not be driven by personal interests, wishlists, or ease of implementation."]}, {"q": "As a business analyst, you've just finished eliciting requirements from stakeholders for a new software project. You've documented the elicitation results and conducted a confirmation session with the stakeholders. What is the primary outcome of this confirmation session?", "o": ["The elicitation results are confirmed and agreed upon by stakeholders.", "Stakeholders have a chance to provide additional inputs.", "The elicitation results are discarded and a new elicitation session is scheduled.", "The business analyst identifies potential solutions based on elicitation results."], "k": 0, "e": ["The primary outcome of confirming elicitation results is that the elicitation results are confirmed and agreed upon by stakeholders. This ensures that the requirements are understood and accepted by all involved parties, reducing the likelihood of misunderstandings or disagreements later in the project. This confirmation process is crucial to the success of the project as it ensures that the project is based on accurate and agreedupon requirements.", "Option 1: While stakeholders may provide additional inputs during the confirmation session, this is not the primary outcome of the session. The main purpose is to confirm the results of the elicitation, not to continue eliciting requirements.", "Option 3: Although the business analyst may start to identify potential solutions based on the elicitation results, this is not the primary outcome of the confirmation session. The main objective is to confirm and agree on the elicitation results.", "Option 4: Discarding the elicitation results and scheduling a new elicitation session would only occur if the elicitation results were found to be incorrect or incomplete. This is not the expected outcome of a confirmation session."]}, {"q": "When selecting an elicitation technique, the business analyst (BA) should consider techniques that are:", "o": ["popular in the industry.", "already known by stakeholders.", "easy to use.", "commonly used in similar initiatives."], "k": 3, "e": ["When selecting an elicitation technique, the business analyst should consider techniques that have been commonly used in similar initiatives. This helps leverage previous successful experiences."]}, {"q": "In a use case, which is one of the two commonly used relationships?", "o": ["Distribute", "Extend", "Identify", "Inherit"], "k": 1, "e": ["In a use case, one of the two commonly used relationships is \"Extend.\" It represents a way to include optional behavior in a use case that is not part of its primary flow."]}];
+const L="ABCDEFGH";
+const $=id=>document.getElementById(id);
+let name="";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function start(){
+  name=$("name").value.trim();
+  if(!name){$("err").textContent="Vui lòng nhập tên trước khi làm bài.";return}
+  $("who").textContent="Người làm bài: "+name;
+  $("start").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  render();
+}
+function render(){
+  $("list").innerHTML=Q.map((q,i)=>`
+    <div class="card" id="c${i}">
+      <p class="q"><small>Câu ${i+1}/${Q.length}</small><br>${esc(q.q)}</p>
+      ${q.o.map((o,j)=>`<label class="opt" id="o${i}_${j}"><input type="radio" name="q${i}" value="${j}"><span><b>${L[j]}.</b> ${esc(o)}</span></label>`).join("")}
+      <div class="badge" id="b${i}"></div><div id="e${i}"></div>
+    </div>`).join("");
+}
+function submit(){
+  let score=0;
+  Q.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name=q${i}]:checked`);
+    const ans=sel?+sel.value:-1;
+    document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.disabled=true);
+    $("c"+i).classList.add("done");
+    $(`o${i}_${q.k}`).classList.add("correct");
+    $("e"+i).innerHTML=`<div class="exp"><p class="t">Giải thích</p>${q.e.map(x=>`<p>${esc(x)}</p>`).join("")}</div>`;
+    const b=$("b"+i);
+    if(ans===q.k){score++;b.className="badge ok";b.textContent="✓ Đúng"}
+    else{
+      if(ans>=0)$(`o${i}_${ans}`).classList.add("wrong");
+      b.className="badge ko";
+      b.textContent=(ans<0?"✗ Chưa trả lời":"✗ Sai")+" — Đáp án đúng: "+L[q.k]+". "+q.o[q.k];
+    }
+  });
+  $("submit").classList.add("hidden");
+  const r=$("result");
+  r.classList.remove("hidden");
+  r.innerHTML=`${esc(name)}, kết quả của bạn:<br><span>${score}/${Q.length}</span> câu đúng`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("go").onclick=start;
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")start()});
+$("submit").onclick=submit;
+</script>
+</body>
+</html>
