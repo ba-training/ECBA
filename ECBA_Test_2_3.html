@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECBA Test 2.3</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1f2937;--mu:#6b7280;--pr:#2563eb;--ok:#16a34a;--okb:#dcfce7;--ko:#dc2626;--kob:#fee2e2;--bd:#e5e7eb}
+@media(prefers-color-scheme:dark){:root{--bg:#111827;--card:#1f2937;--tx:#f3f4f6;--mu:#9ca3af;--bd:#374151;--okb:#14532d;--kob:#7f1d1d}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+header{background:var(--pr);color:#fff;text-align:center;padding:22px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:1.5rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+main{max-width:760px;margin:0 auto;padding:20px 14px 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:16px}
+.start{text-align:center;margin-top:40px}
+input[type=text]{width:100%;max-width:340px;padding:11px 14px;font-size:1rem;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+button{background:var(--pr);color:#fff;border:0;border-radius:8px;padding:11px 26px;font-size:1rem;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.err{color:var(--ko);font-size:.9rem;min-height:1.3em;margin-top:6px}
+.q{font-weight:600;margin:0 0 12px}
+.q small{color:var(--mu);font-weight:500}
+label.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer}
+label.opt:hover{border-color:var(--pr)}
+label.opt input{margin-top:4px}
+.done label.opt{cursor:default}
+.opt.correct{background:var(--okb);border-color:var(--ok)}
+.opt.wrong{background:var(--kob);border-color:var(--ko)}
+.badge{font-weight:700;margin-top:6px;font-size:.95rem}
+.badge.ok{color:var(--ok)}.badge.ko{color:var(--ko)}
+.result{text-align:center;font-size:1.3rem;font-weight:700}
+.result span{color:var(--pr);font-size:1.9rem}
+.exp{margin-top:10px;padding:12px;border-left:4px solid var(--pr);background:var(--bg);border-radius:6px;font-size:.93rem}
+.exp p{margin:0 0 8px}.exp p:last-child{margin:0}
+.exp .t{font-weight:700;color:var(--pr)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1>ECBA Test 2.3</h1><p id="who"></p></header>
+<main>
+  <section id="start" class="card start">
+    <h2>Nhập tên của bạn để bắt đầu</h2>
+    <input id="name" type="text" placeholder="Họ và tên" autocomplete="name">
+    <div class="err" id="err"></div>
+    <button id="go">Bắt đầu làm bài</button>
+  </section>
+  <section id="quiz" class="hidden">
+    <div id="result" class="card result hidden"></div>
+    <div id="list"></div>
+    <div style="text-align:center"><button id="submit">Nộp bài</button></div>
+  </section>
+</main>
+<script>
+const Q=[{"q": "Which task is performed when the business analyst (BA) ensures that stakeholders have a shared understanding of the outcomes of elicitation?", "o": ["Conduct elicitation", "Communicate business analysis information", "Confirm elicitation results", "Manage stakeholder collaboration"], "k": 2, "e": ["The task of \"Confirming elicitation results\" is performed when the business analyst ensures that stakeholders have a shared understanding of the outcomes of elicitation. This task involves validating and clarifying information gathered during the elicitation process."]}, {"q": "As a business analyst, you are working on a project that involves multiple stakeholders with varying interests. You need to gain consensus and approvals on the proposed solution. Which communication technique would be most effective in this scenario?", "o": ["Distributing printed reports at a company meeting", "Conducting workshops", "Sending individual emails to each stakeholder", "Posting updates on the company's intranet"], "k": 1, "e": ["Workshops are a highly effective communication technique for gaining consensus and approvals, especially in scenarios involving multiple stakeholders with varying interests. In a workshop, stakeholders can discuss, debate, and resolve differences. This interactive setting allows for realtime feedback and consensusbuilding, making it an excellent tool for gaining approvals.", "Option 1: Sending individual emails to each stakeholder can be timeconsuming and may not effectively facilitate discussion or consensusbuilding. This method is more suitable for sharing information rather than seeking approvals.", "Option 3: Posting updates on the company's intranet is a passive communication method and may not reach all stakeholders effectively. It also does not provide an opportunity for discussion and consensusbuilding.", "Option 4: Distributing printed reports at a company meeting is a formal method of sharing information but does not facilitate interactive discussion or consensusbuilding. This approach is more suitable for sharing finalized decisions or updates."]}, {"q": "Which technique represents a small, concise statement of functionality or quality needed to deliver value to a specific stakeholder?", "o": ["Scope modelling", "Business case", "Lessons learned", "User stories"], "k": 3, "e": ["User stories are a technique that represents small, concise statements of functionality or quality needed to deliver value to a specific stakeholder. They are often used in agile methodologies."]}, {"q": "Which of the following is an example of a requirements viewpoint?", "o": ["Expert judgement", "Use case", "Mind map", "Item tracking"], "k": 1, "e": ["A use case is an example of a requirements viewpoint, as it represents a specific way of satisfying one or more needs in a context. Use cases are commonly used to describe system interactions and requirements."]}, {"q": "The purpose of using process analysis is to:", "o": ["understand factors to be included in a contract negotiation.", "identify and evaluate the underlying causes of a problem.", "improve decision making by finding useful patterns.", "describe the sequential flow of work or activities."], "k": 3, "e": ["Process anal**y**sis is used to describe the sequential flow of work or activities in a business process. It helps understand how activities are performed in a specific order."]}, {"q": "In a scenario where your organization is developing a new software product, what does a 'Create' solution approach imply?", "o": ["The software components are rented.", "The software components are obtained through a combination of creation and purchase.", "The software components are assembled, constructed, or developed by the organization's own experts.", "The software components are selected from thirdparty offerings."], "k": 2, "e": ["A 'Create' solution approach implies that the solution components, in this case, the software components, are assembled, constructed, or developed by the organization's own experts. This approach is often chosen when the organization has the necessary expertise and resources, and it provides a high level of control over the quality and functionality of the software.", "Option 1: This option is not correct because selecting components from thirdparty offerings corresponds to a 'Purchase' solution approach, not a 'Create' approach.", "Option 2: This option is not correct because renting components corresponds to a 'Lease' solution approach, not a 'Create' approach.", "Option 4: This option is not correct because obtaining components through a combination of creation and purchase corresponds to a 'Hybrid' solution approach, not a 'Create' approach."]}, {"q": "Imagine you are a business analyst for a software company that is considering a proposed change to one of its key products. This change would require significant upfront investment but is expected to yield substantial longterm benefits. Why would it be important for you to consider both tangible and intangible costs and benefits when estimating the value of this proposed change?", "o": ["Because tangible costs and benefits are more important than intangible costs and benefits.", "Because intangible costs and benefits are more important than tangible costs and benefits.", "Because a complete estimate of the purposedriven and monetary effects of a proposed change requires considering both tangible and intangible costs and benefits.", "Because decision makers find it easier to compare options when benefits are intangible and costs are tangible."], "k": 2, "e": ["The correct answer is Option 4. When estimating the value of a proposed change, it is crucial to consider both tangible and intangible costs and benefits. Tangible costs and benefits are those that can be easily measured in monetary terms, such as the cost of new equipment or the revenue from increased sales. Intangible costs and benefits, on the other hand, are those that cannot be easily quantified but still have an impact on the organization. These might include things like improved customer satisfaction or increased employee morale. By considering both types of costs and benefits, business analysts can provide a more complete and accurate estimate of the value of a proposed change.", "Option 1: Option 1 is incorrect because it suggests that tangible costs and benefits are more important than intangible ones. While tangible costs and benefits are often easier to measure, intangible costs and benefits can also have a significant impact on an organization and should not be overlooked.", "Option 2: Option 2 is incorrect because it suggests that intangible costs and benefits are more important than tangible ones. While intangible costs and benefits can be difficult to measure, they are not inherently more important than tangible costs and benefits. Both types of costs and benefits should be considered when estimating the value of a proposed change.", "Option 3: Option 3 is incorrect because it suggests that decision makers find it easier to compare options when benefits are intangible and costs are tangible. This is not necessarily true. The ease of comparing options depends on many factors, including the specific costs and benefits involved and the decision makers' familiarity with them."]}, {"q": "In a project, you've noticed that a requirement you've analyzed doesn't seem to fit the project's solution scope. The project manager insists on its necessity. What should be your next step?", "o": ["Reevaluate the future state and change the solution scope or remove the requirement from the solution scope.", "Automatically discard the requirement.", "Revise the requirement until it aligns with the solution scope.", "Immediately expand the solution scope to include the requirement."], "k": 0, "e": ["The correct answer is Option 3. When a requirement does not fit with the project's solution scope, it's important to reevaluate the future state and consider changing the solution scope or removing the requirement from the solution scope. Simply discarding the requirement or revising it until it aligns with the solution scope may not always be the best course of action, as it may not address the root cause of the issue, or it may lead to a solution that does not fully meet the project's objectives.", "Option 1: Automatically discarding the requirement may not be the best course of action, as it may be crucial for the project's success. It's important to reevaluate the future state and consider changing the solution scope or removing the requirement from the solution scope.", "Option 2: Immediately expanding the solution scope to include the requirement may lead to scope creep, which can cause the project to go over budget and off schedule. It's important to reevaluate the future state and consider changing the solution scope or removing the requirement from the solution scope.", "Option 4: Simply revising the requirement until it aligns with the solution scope may not address the root cause of the issue, and it may lead to a solution that does not fully meet the project's objectives. It's important to reevaluate the future state and consider changing the solution scope or removing the requirement from the solution scope."]}, {"q": "What characterizes a good collaboration with stakeholders?", "o": ["Occasional communication with stakeholders when obstacles occur", "Regular, frequent and bidirectional communication with all stakeholders", "Direct and frequent communication with the most influential stakeholders", "Regular exchange of information, ideas, innovations with only supportive stakeholders"], "k": 1, "e": ["Effective collaboration with stakeholders involves regular, frequent, and bidirectional communication with all stakeholders, not just the most influential or supportive ones."]}, {"q": "You are an analyst in a company planning to implement a new software system. The stakeholders have different views on the system's features. What could NOT be the potential consequence of poor stakeholder relationships in this scenario?", "o": ["The stakeholders may fail to provide quality information.", "The company may face a lack of innovation.", "The business analysis information may be ignored.", "The stakeholders may show resistance to change."], "k": 1, "e": ["In the context of BABOK® v3, poor relationships with stakeholders can lead to several negative outcomes. However, a lack of innovation is not directly linked to poor stakeholder relationships. Innovation is generally a result of a positive and creative environment, and while stakeholder relationships can contribute to this, they are not a direct cause or effect.", "Option 1: Poor relationships with stakeholders can indeed lead to failure to provide quality information. Stakeholders may not feel engaged or may not trust the process, and therefore may not provide the necessary or accurate information.", "Option 3: Resistance to change is a common consequence of poor stakeholder relationships. If stakeholders are not properly engaged or if they do not feel their concerns are being addressed, they may resist the changes being proposed.", "Option 4: If relationships with stakeholders are poor, there is a risk that business analysis information may be ignored. This is because stakeholders may not trust the information or may not feel invested in the process."]}];
+const L="ABCDEFGH";
+const $=id=>document.getElementById(id);
+let name="";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function start(){
+  name=$("name").value.trim();
+  if(!name){$("err").textContent="Vui lòng nhập tên trước khi làm bài.";return}
+  $("who").textContent="Người làm bài: "+name;
+  $("start").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  render();
+}
+function render(){
+  $("list").innerHTML=Q.map((q,i)=>`
+    <div class="card" id="c${i}">
+      <p class="q"><small>Câu ${i+1}/${Q.length}</small><br>${esc(q.q)}</p>
+      ${q.o.map((o,j)=>`<label class="opt" id="o${i}_${j}"><input type="radio" name="q${i}" value="${j}"><span><b>${L[j]}.</b> ${esc(o)}</span></label>`).join("")}
+      <div class="badge" id="b${i}"></div><div id="e${i}"></div>
+    </div>`).join("");
+}
+function submit(){
+  let score=0;
+  Q.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name=q${i}]:checked`);
+    const ans=sel?+sel.value:-1;
+    document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.disabled=true);
+    $("c"+i).classList.add("done");
+    $(`o${i}_${q.k}`).classList.add("correct");
+    $("e"+i).innerHTML=`<div class="exp"><p class="t">Giải thích</p>${q.e.map(x=>`<p>${esc(x)}</p>`).join("")}</div>`;
+    const b=$("b"+i);
+    if(ans===q.k){score++;b.className="badge ok";b.textContent="✓ Đúng"}
+    else{
+      if(ans>=0)$(`o${i}_${ans}`).classList.add("wrong");
+      b.className="badge ko";
+      b.textContent=(ans<0?"✗ Chưa trả lời":"✗ Sai")+" — Đáp án đúng: "+L[q.k]+". "+q.o[q.k];
+    }
+  });
+  $("submit").classList.add("hidden");
+  const r=$("result");
+  r.classList.remove("hidden");
+  r.innerHTML=`${esc(name)}, kết quả của bạn:<br><span>${score}/${Q.length}</span> câu đúng`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("go").onclick=start;
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")start()});
+$("submit").onclick=submit;
+</script>
+</body>
+</html>
