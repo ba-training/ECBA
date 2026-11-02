@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECBA Test 2.8</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1f2937;--mu:#6b7280;--pr:#2563eb;--ok:#16a34a;--okb:#dcfce7;--ko:#dc2626;--kob:#fee2e2;--bd:#e5e7eb}
+@media(prefers-color-scheme:dark){:root{--bg:#111827;--card:#1f2937;--tx:#f3f4f6;--mu:#9ca3af;--bd:#374151;--okb:#14532d;--kob:#7f1d1d}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+header{background:var(--pr);color:#fff;text-align:center;padding:22px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:1.5rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+main{max-width:760px;margin:0 auto;padding:20px 14px 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:16px}
+.start{text-align:center;margin-top:40px}
+input[type=text]{width:100%;max-width:340px;padding:11px 14px;font-size:1rem;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+button{background:var(--pr);color:#fff;border:0;border-radius:8px;padding:11px 26px;font-size:1rem;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.err{color:var(--ko);font-size:.9rem;min-height:1.3em;margin-top:6px}
+.q{font-weight:600;margin:0 0 12px}
+.q small{color:var(--mu);font-weight:500}
+label.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer}
+label.opt:hover{border-color:var(--pr)}
+label.opt input{margin-top:4px}
+.done label.opt{cursor:default}
+.opt.correct{background:var(--okb);border-color:var(--ok)}
+.opt.wrong{background:var(--kob);border-color:var(--ko)}
+.badge{font-weight:700;margin-top:6px;font-size:.95rem}
+.badge.ok{color:var(--ok)}.badge.ko{color:var(--ko)}
+.result{text-align:center;font-size:1.3rem;font-weight:700}
+.result span{color:var(--pr);font-size:1.9rem}
+.exp{margin-top:10px;padding:12px;border-left:4px solid var(--pr);background:var(--bg);border-radius:6px;font-size:.93rem}
+.exp p{margin:0 0 8px}.exp p:last-child{margin:0}
+.exp .t{font-weight:700;color:var(--pr)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1>ECBA Test 2.8</h1><p id="who"></p></header>
+<main>
+  <section id="start" class="card start">
+    <h2>Nhập tên của bạn để bắt đầu</h2>
+    <input id="name" type="text" placeholder="Họ và tên" autocomplete="name">
+    <div class="err" id="err"></div>
+    <button id="go">Bắt đầu làm bài</button>
+  </section>
+  <section id="quiz" class="hidden">
+    <div id="result" class="card result hidden"></div>
+    <div id="list"></div>
+    <div style="text-align:center"><button id="submit">Nộp bài</button></div>
+  </section>
+</main>
+<script>
+const Q=[{"q": "In the define design options task, which of the following relates to the identify improvement opportunities element?", "o": ["Create flow diagrams, purchase solutions components, secure resources", "Define change strategy, analyze current state, prioritize requirements", "Increase efficiencies, identify additional capabilities, improve access to information", "Assess issues, define risks, confirm elicitation results"], "k": 2, "e": ["In the \"Define design options\" task, the element related to \"identify improvement opportunities\" involves actions to increase efficiencies, identify additional capabilities, and improve access to information."]}, {"q": "The task that uses the elicitation activity plan to draw out, explore and identify information relevant to the change is:", "o": ["conduct elicitation.", "confirm elicitation results.", "plan business analysis information.", "prepare for elicitation."], "k": 0, "e": ["The task that uses the elicitation activity plan to draw out, explore, and identify information relevant to the change is \"Conduct elicitation.\" This task involves actively engaging with stakeholders to gather information."]}, {"q": "What is a definitional rule?", "o": ["An obligation or prohibition of conduct, action, practice, or procedure", "A representation of the operational knowledge of the organization", "A representation of the behavior of people", "A rule that can be violated"], "k": 0, "e": ["A definitional rule is an obligation or prohibition of conduct, action, practice, or procedure. It defines how something should be done."]}, {"q": "Business analysis is the practice of enabling change in an enterprise by:", "o": ["identifying pain points and recommending alternatives.", "defining organizational needs and recommending solutions.", "understanding strategic objectives and improving internal processes.", "listening to stakeholder feedback and documenting their issues."], "k": 1, "e": ["Business analysis involves defining organizational needs and recommending solutions to enable change. It's about identifying what the organization requires and how to achieve it."]}, {"q": "A project team is working on the development of a new software application. The team has defined various requirements for the application. Among these requirements, some have clearly defined relationships with other requirements and components. What does this imply in the context of Trace Requirements?", "o": ["These requirements are not clearly defined.", "These requirements are static and are not affected by changes.", "These requirements are traced requirements, having clearly defined relationships to other requirements and components.", "These requirements are independent and have no relation to other elements."], "k": 2, "e": ["In the context of Trace Requirements, the term 'traced requirements' refers to the requirements that have clearly defined relationships to other requirements and components. This means that these requirements are not isolated, but rather they are interconnected with other elements of the system or solution. This interconnection could be in terms of functionality, dependency, or impact. Tracing requirements helps in understanding the ripple effect of changes, in assessing the impact of potential changes, and in maintaining the consistency and integrity of the system or solution as changes occur.", "Option 1: This option is incorrect because traced requirements are not independent. On the contrary, they have defined relationships with other elements.", "Option 2: This option is incorrect because traced requirements are not undefined. They are clearly defined and have specific relationships with other elements.", "Option 4: This option is incorrect because traced requirements are not static. They can be affected by changes, and their relationships with other requirements and components help in understanding and managing the impact of these changes."]}, {"q": "As a business analyst, you are working on a project with multiple stakeholders. The team is facing a problem with decision making and problem solving. What is your primary role to facilitate in this situation?", "o": ["Facilitate interactions between stakeholders for making decisions and solving problems", "Develop trust among team members", "Motivate people to act in ways that achieve shared goals", "Define, analyze, and communicate business analysis information"], "k": 0, "e": ["The primary role of a business analyst in this situation is to facilitate interactions between stakeholders for making decisions and solving problems. This is crucial to ensure that all stakeholders are aligned and moving towards a common goal. The business analyst acts as a bridge between different stakeholders, helping them to understand each other's perspectives and find a common ground for decision making and problem solving.", "Option 1: While motivating people to act in ways that achieve shared goals is important, it is not the primary role of a business analyst in this specific situation. This option is incorrect.", "Option 2: Developing trust among team members is a crucial aspect of team dynamics, but it's not the primary role of a business analyst when it comes to decision making and problem solving. This option is incorrect.", "Option 4: Defining, analyzing, and communicating business analysis information is a part of the business analyst's role, but in this specific situation, the primary role is to facilitate interactions for decision making and problem solving. This option is incorrect."]}, {"q": "What skill is required by a business analyst (BA) to understand how the people, processes, and technology within an organization interact, tounderstand the enterprise from a holistic point of view?", "o": ["Conceptual thinking", "Systems thinking", "Problem solving", "Creative thinking"], "k": 1, "e": ["Systems thinking is the skill required by a business analyst to understand how the people, processes, and technology within an organization interact and to understand the enterprise from a holistic point of view. This skill is crucial for analyzing complex systems."]}, {"q": "You are a business analyst in a large enterprise. The company is planning to implement a new software system to streamline its operations. As a business analyst, what would be your primary role in this scenario?", "o": ["Focus solely on the costbenefit analysis of the new software system", "Define the needs and recommend solutions that deliver value to stakeholders", "Limit the analysis to the current state of the business operations", "Focus only on the strategic initiatives related to the new software system"], "k": 1, "e": ["The primary role of a business analyst in such a scenario would be to define the needs and recommend solutions that deliver value to stakeholders. This involves understanding the requirements of the stakeholders, analyzing the potential value of the solutions, and recommending the most suitable solution. This is in line with the 'Analyze Potential Value and Recommend Solution' task of the 'Requirements Analysis and Design Definition' knowledge area as per BABOK v3 Chapter 7.", "Option 1: While costbenefit analysis is a part of the business analysis, it is not the primary role of a business analyst. The primary role is to define the needs and recommend solutions that deliver value to stakeholders.", "Option 3: Limiting the analysis to the current state of business operations would not be sufficient. A business analyst should also consider the future state and how the new software system would affect it.", "Option 4: While strategic initiatives are important, they are not the primary focus of a business analyst. The primary role is to define the needs and recommend solutions that deliver value to stakeholders."]}, {"q": "Your organization is planning to launch a new website. The business analyst team has been tasked with gathering requirements and designing the solution. Which of the following statements best describes the roles of requirements and designs in this scenario?", "o": ["Requirements define what the website should look like, while designs outline the technical specifications.", "Requirements focus on the future vision, while designs focus on the current state.", "Requirements outline the technical specifications, while designs define what the website should look like.", "Requirements specify what needs to be done, while designs specify how it will be done."], "k": 3, "e": ["In the context of business analysis, requirements are used to specify what needs to be achieved in this case, the desired features and functionality of the new website. Designs, on the other hand, are used to specify how these requirements will be implemented. This includes the technical specifications, architecture, and other details that will guide the development team in building the website.", "Option 1: This is incorrect because requirements do not typically include details about the website's appearance. These details are usually part of the design.", "Option 2: This is incorrect because technical specifications are usually part of the design, not the requirements.", "Option 4: This is incorrect because both requirements and designs can focus on the future. Requirements outline what needs to be achieved in the future, while designs outline how to achieve it."]}, {"q": "Conducting elicitation by asking questions and documenting responses from relevant stakeholders has the following strength:", "o": ["sharing of information.", "encouraging participation.", "analytical thinking.", "prioritization setting."], "k": 1, "e": ["Conducting elicitation by asking questions and documenting responses from relevant stakeholders encourages participation. It involves stakeholders actively contributing their knowledge and insights.Refer to BABOK: This is supported by BABOK v3, specifically in the Elicitation and Collaboration knowledge area. The \"Conduct Elicitation\" task includes techniques such as interviews and surveys, which directly involve asking questions and documenting responses. Specifically, in BABOK version 3, in the section 5.4 Conduct Elicitation, it explains about interviewing stakeholders and how it encourage participation from those stakeholders."]}];
+const L="ABCDEFGH";
+const $=id=>document.getElementById(id);
+let name="";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function start(){
+  name=$("name").value.trim();
+  if(!name){$("err").textContent="Vui lòng nhập tên trước khi làm bài.";return}
+  $("who").textContent="Người làm bài: "+name;
+  $("start").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  render();
+}
+function render(){
+  $("list").innerHTML=Q.map((q,i)=>`
+    <div class="card" id="c${i}">
+      <p class="q"><small>Câu ${i+1}/${Q.length}</small><br>${esc(q.q)}</p>
+      ${q.o.map((o,j)=>`<label class="opt" id="o${i}_${j}"><input type="radio" name="q${i}" value="${j}"><span><b>${L[j]}.</b> ${esc(o)}</span></label>`).join("")}
+      <div class="badge" id="b${i}"></div><div id="e${i}"></div>
+    </div>`).join("");
+}
+function submit(){
+  let score=0;
+  Q.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name=q${i}]:checked`);
+    const ans=sel?+sel.value:-1;
+    document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.disabled=true);
+    $("c"+i).classList.add("done");
+    $(`o${i}_${q.k}`).classList.add("correct");
+    $("e"+i).innerHTML=`<div class="exp"><p class="t">Giải thích</p>${q.e.map(x=>`<p>${esc(x)}</p>`).join("")}</div>`;
+    const b=$("b"+i);
+    if(ans===q.k){score++;b.className="badge ok";b.textContent="✓ Đúng"}
+    else{
+      if(ans>=0)$(`o${i}_${ans}`).classList.add("wrong");
+      b.className="badge ko";
+      b.textContent=(ans<0?"✗ Chưa trả lời":"✗ Sai")+" — Đáp án đúng: "+L[q.k]+". "+q.o[q.k];
+    }
+  });
+  $("submit").classList.add("hidden");
+  const r=$("result");
+  r.classList.remove("hidden");
+  r.innerHTML=`${esc(name)}, kết quả của bạn:<br><span>${score}/${Q.length}</span> câu đúng`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("go").onclick=start;
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")start()});
+$("submit").onclick=submit;
+</script>
+</body>
+</html>
