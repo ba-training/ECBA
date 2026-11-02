@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECBA Test 2.2</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1f2937;--mu:#6b7280;--pr:#2563eb;--ok:#16a34a;--okb:#dcfce7;--ko:#dc2626;--kob:#fee2e2;--bd:#e5e7eb}
+@media(prefers-color-scheme:dark){:root{--bg:#111827;--card:#1f2937;--tx:#f3f4f6;--mu:#9ca3af;--bd:#374151;--okb:#14532d;--kob:#7f1d1d}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+header{background:var(--pr);color:#fff;text-align:center;padding:22px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:1.5rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+main{max-width:760px;margin:0 auto;padding:20px 14px 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:16px}
+.start{text-align:center;margin-top:40px}
+input[type=text]{width:100%;max-width:340px;padding:11px 14px;font-size:1rem;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+button{background:var(--pr);color:#fff;border:0;border-radius:8px;padding:11px 26px;font-size:1rem;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.err{color:var(--ko);font-size:.9rem;min-height:1.3em;margin-top:6px}
+.q{font-weight:600;margin:0 0 12px}
+.q small{color:var(--mu);font-weight:500}
+label.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer}
+label.opt:hover{border-color:var(--pr)}
+label.opt input{margin-top:4px}
+.done label.opt{cursor:default}
+.opt.correct{background:var(--okb);border-color:var(--ok)}
+.opt.wrong{background:var(--kob);border-color:var(--ko)}
+.badge{font-weight:700;margin-top:6px;font-size:.95rem}
+.badge.ok{color:var(--ok)}.badge.ko{color:var(--ko)}
+.result{text-align:center;font-size:1.3rem;font-weight:700}
+.result span{color:var(--pr);font-size:1.9rem}
+.exp{margin-top:10px;padding:12px;border-left:4px solid var(--pr);background:var(--bg);border-radius:6px;font-size:.93rem}
+.exp p{margin:0 0 8px}.exp p:last-child{margin:0}
+.exp .t{font-weight:700;color:var(--pr)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1>ECBA Test 2.2</h1><p id="who"></p></header>
+<main>
+  <section id="start" class="card start">
+    <h2>Nhập tên của bạn để bắt đầu</h2>
+    <input id="name" type="text" placeholder="Họ và tên" autocomplete="name">
+    <div class="err" id="err"></div>
+    <button id="go">Bắt đầu làm bài</button>
+  </section>
+  <section id="quiz" class="hidden">
+    <div id="result" class="card result hidden"></div>
+    <div id="list"></div>
+    <div style="text-align:center"><button id="submit">Nộp bài</button></div>
+  </section>
+</main>
+<script>
+const Q=[{"q": "During a project, the business analyst is tasked with validating the requirements. What is the primary objective of this task?", "o": ["To ensure that all requirements and designs align to the business requirements and support the delivery of needed value.", "To define the financial benefits associated with requirements.", "To identify previously documented business needs in order to validate requirements.", "To define the quality metrics that must be met to achieve acceptance by a stakeholder."], "k": 0, "e": ["The main purpose of validating requirements is to ensure that all requirements and designs align to the business requirements and support the delivery of needed value. This involves checking that the requirements are clear, feasible, and aligned with the business objectives. It ensures that the solution being developed will meet the needs of the business and deliver the expected value.", "Option 1: While defining the financial benefits associated with requirements can be a part of the requirements analysis process, it is not the primary objective of validating requirements.", "Option 3: Identifying previously documented business needs can help in understanding the requirements, but it is not the main purpose of validating requirements.", "Option 4: Defining the quality metrics that must be met to achieve acceptance by a stakeholder is a part of the requirements analysis process, but it is not the primary objective of validating requirements."]}, {"q": "When planning elicitation activities, which technique could be used to determine the possible participants and their roles?", "o": ["Roles and permissions matrix", "Data mining", "Stakeholder list, map, or personas", "Risk analysis and management"], "k": 2, "e": ["To determine the possible participants and their roles in elicitation activities, the business analyst could use a stakeholder list, stakeholder map, or personas. These techniques help identify stakeholders and their characteristics."]}, {"q": "Your company is developing a new software application. As a business analyst, you are working on the requirements. Which type of requirement would include details such as 'The system shall allow the user to sort the data by date, name, or size'?", "o": ["Stakeholder Requirements", "Functional Requirements", "NonFunctional Requirements", "Business Requirements"], "k": 1, "e": ["Functional requirements describe the specific behavior and capabilities of a solution. They detail what the system should do and include functions, features, and capabilities that the system needs to satisfy the user's needs. In this case, the capability to sort data by date, name, or size is a specific behavior or function of the system, hence it is a functional requirement.", "Option 1: Business requirements are highlevel statements of the goals, objectives, or needs of the organization. They describe the reasons why a project has been initiated, the objectives that the project will achieve, and the metrics that will be used to measure its success.", "Option 2: Stakeholder requirements represent the needs of stakeholders that must be met in order to achieve the business requirements. They are derived from the business requirements and serve as a bridge to more detailed technical requirements.", "Option 4: Nonfunctional requirements describe the characteristics of the system or the environment in which the system operates, such as performance, security, usability, etc. They do not describe specific system behaviors like functional requirements do."]}, {"q": "When approving requirements, conflict and issue management is an element used to assist in:", "o": ["performing quality control.", "measuring performance indicators.", "identifying activities.", "obtaining consensus among stakeholders."], "k": 3, "e": ["Conflict and issue management, when approving requirements, is used to assist in obtaining consensus among stakeholders. This ensures that requirements are agreed upon and align with business needs."]}, {"q": "What analysis needs to be performed in order to evaluate the effect of change?", "o": ["Impact", "Decision", "Competitive", "Modeling"], "k": 0, "e": ["To evaluate the effect of a change, business analysts perform impact analysis to understand how a change will affect various aspects of a project or solution."]}, {"q": "When planning business analysis information management, what are the factors that influence storage and access decisions?", "o": ["Business policies and methodology adopted", "Organizational standards and tool availability", "Organizational values and procurement strategy", "Business rules and change strategy"], "k": 1, "e": ["When planning business analysis information management, the factors that influence storage and access decisions include organizational standards and tool availability. These factors guide how information is stored and accessed during the business analysis process."]}, {"q": "Your team has been working on the design of a new software application. After several discussions with the stakeholders, you have a list of requirements. What would be your next step?", "o": ["Approve the requirements and designs.", "Discuss the requirements with the stakeholders again.", "Resolve any conflicts among stakeholders.", "Start developing the software application immediately."], "k": 0, "e": ["The 'Approve Requirements' process is crucial in the business analysis process as it is the step where the requirements and designs are validated and agreed upon by all stakeholders. This process ensures that all requirements are understood, agreed upon, and ready for implementation. It is the final validation before the construction of the solution begins.", "Option 1: Starting the development immediately without approving the requirements can lead to misunderstandings, rework, and potential project failures. It's essential to have a clear and agreedupon set of requirements before starting the development.", "Option 2: While it is important to discuss the requirements with stakeholders, this should have been done before reaching the approval stage. At this point, the requirements should be ready for approval.", "Option 4: Resolving conflicts among stakeholders is important, but it's not the primary purpose of the 'Approve Requirements' process. Conflicts should ideally be resolved before this stage."]}, {"q": "Which cost is estimated based on the alternative results that might have been achieved if the resources devoted to one design option had beenallocated to another design option?", "o": ["Maintenance", "Implementation", "Purchase", "Opportunity"], "k": 3, "e": ["Opportunity cost is estimated based on the alternative results that might have been achieved if resources were allocated to a different design option."]}, {"q": "One element of the task plan business analysis information management is:", "o": ["change control process.", "decision making authority.", "level of abstraction.", "complexity and risk."], "k": 2, "e": ["One element of the task plan for business analysis information management is the \"level of abstraction.\" It helps determine the appropriate level of detail for requirements and designs."]}, {"q": "A technique that is used to elicit information by viewing and understanding activities and their context is known as:", "o": ["observation.", "workshop.", "brainstorming.", "review."], "k": 0, "e": ["Observation is a technique used to elicit information by viewing and understanding activities and their context."]}];
+const L="ABCDEFGH";
+const $=id=>document.getElementById(id);
+let name="";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function start(){
+  name=$("name").value.trim();
+  if(!name){$("err").textContent="Vui lòng nhập tên trước khi làm bài.";return}
+  $("who").textContent="Người làm bài: "+name;
+  $("start").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  render();
+}
+function render(){
+  $("list").innerHTML=Q.map((q,i)=>`
+    <div class="card" id="c${i}">
+      <p class="q"><small>Câu ${i+1}/${Q.length}</small><br>${esc(q.q)}</p>
+      ${q.o.map((o,j)=>`<label class="opt" id="o${i}_${j}"><input type="radio" name="q${i}" value="${j}"><span><b>${L[j]}.</b> ${esc(o)}</span></label>`).join("")}
+      <div class="badge" id="b${i}"></div><div id="e${i}"></div>
+    </div>`).join("");
+}
+function submit(){
+  let score=0;
+  Q.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name=q${i}]:checked`);
+    const ans=sel?+sel.value:-1;
+    document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.disabled=true);
+    $("c"+i).classList.add("done");
+    $(`o${i}_${q.k}`).classList.add("correct");
+    $("e"+i).innerHTML=`<div class="exp"><p class="t">Giải thích</p>${q.e.map(x=>`<p>${esc(x)}</p>`).join("")}</div>`;
+    const b=$("b"+i);
+    if(ans===q.k){score++;b.className="badge ok";b.textContent="✓ Đúng"}
+    else{
+      if(ans>=0)$(`o${i}_${ans}`).classList.add("wrong");
+      b.className="badge ko";
+      b.textContent=(ans<0?"✗ Chưa trả lời":"✗ Sai")+" — Đáp án đúng: "+L[q.k]+". "+q.o[q.k];
+    }
+  });
+  $("submit").classList.add("hidden");
+  const r=$("result");
+  r.classList.remove("hidden");
+  r.innerHTML=`${esc(name)}, kết quả của bạn:<br><span>${score}/${Q.length}</span> câu đúng`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("go").onclick=start;
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")start()});
+$("submit").onclick=submit;
+</script>
+</body>
+</html>
