@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECBA Test 2.10</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1f2937;--mu:#6b7280;--pr:#2563eb;--ok:#16a34a;--okb:#dcfce7;--ko:#dc2626;--kob:#fee2e2;--bd:#e5e7eb}
+@media(prefers-color-scheme:dark){:root{--bg:#111827;--card:#1f2937;--tx:#f3f4f6;--mu:#9ca3af;--bd:#374151;--okb:#14532d;--kob:#7f1d1d}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+header{background:var(--pr);color:#fff;text-align:center;padding:22px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:1.5rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+main{max-width:760px;margin:0 auto;padding:20px 14px 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:16px}
+.start{text-align:center;margin-top:40px}
+input[type=text]{width:100%;max-width:340px;padding:11px 14px;font-size:1rem;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+button{background:var(--pr);color:#fff;border:0;border-radius:8px;padding:11px 26px;font-size:1rem;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.err{color:var(--ko);font-size:.9rem;min-height:1.3em;margin-top:6px}
+.q{font-weight:600;margin:0 0 12px}
+.q small{color:var(--mu);font-weight:500}
+label.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer}
+label.opt:hover{border-color:var(--pr)}
+label.opt input{margin-top:4px}
+.done label.opt{cursor:default}
+.opt.correct{background:var(--okb);border-color:var(--ok)}
+.opt.wrong{background:var(--kob);border-color:var(--ko)}
+.badge{font-weight:700;margin-top:6px;font-size:.95rem}
+.badge.ok{color:var(--ok)}.badge.ko{color:var(--ko)}
+.result{text-align:center;font-size:1.3rem;font-weight:700}
+.result span{color:var(--pr);font-size:1.9rem}
+.exp{margin-top:10px;padding:12px;border-left:4px solid var(--pr);background:var(--bg);border-radius:6px;font-size:.93rem}
+.exp p{margin:0 0 8px}.exp p:last-child{margin:0}
+.exp .t{font-weight:700;color:var(--pr)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1>ECBA Test 2.10</h1><p id="who"></p></header>
+<main>
+  <section id="start" class="card start">
+    <h2>Nhập tên của bạn để bắt đầu</h2>
+    <input id="name" type="text" placeholder="Họ và tên" autocomplete="name">
+    <div class="err" id="err"></div>
+    <button id="go">Bắt đầu làm bài</button>
+  </section>
+  <section id="quiz" class="hidden">
+    <div id="result" class="card result hidden"></div>
+    <div id="list"></div>
+    <div style="text-align:center"><button id="submit">Nộp bài</button></div>
+  </section>
+</main>
+<script>
+const Q=[{"q": "Which of the following tasks is part of the business analysis planning and monitoring knowledge area?", "o": ["Analyze current state", "Plan stakeholder engagement", "Trace requirements", "Assess solution limitations"], "k": 1, "e": ["Planning stakeholder engagement is a task within the business analysis planning and monitoring knowledge area. It involves developing plans to engage stakeholders effectively in the business analysis process."]}, {"q": "You are a business analyst working on a new software development project. During the 'Conduct Elicitation' process, you have gathered information from various stakeholders through interviews and workshops. What would be the primary output of this process?", "o": ["A fully developed software solution", "Elicitation results (unconfirmed)", "Confirmed requirements", "A detailed project plan"], "k": 1, "e": ["The 'Conduct Elicitation' process primarily results in elicitation results, which are unconfirmed information gathered from stakeholders. This information needs to be confirmed and clarified in the subsequent 'Confirm Elicitation Results' process before it becomes 'Confirmed Requirements'.", "Option 1: A detailed project plan is not the output of the 'Conduct Elicitation' process. It is usually developed during the 'Plan Business Analysis' process.", "Option 2: A fully developed software solution is the final output of the entire project, not the 'Conduct Elicitation' process.", "Option 4: Confirmed requirements are not the output of the 'Conduct Elicitation' process. They are the result of the 'Confirm Elicitation Results' process, which follows the 'Conduct Elicitation' process."]}, {"q": "As a business analyst in a software development company, you are working on a project that has multiple stakeholders with conflicting requirements. In this context, what would be the key aim of conflict and issue management in the process of approving requirements?", "o": ["To ensure requirements and designs are supportable within technology standards", "To keep accurate records of current approval status", "To justify investment in a solution", "To maintain stakeholder support for the solution"], "k": 3, "e": ["The key aim of conflict and issue management in the process of approving requirements is to maintain stakeholder support for the solution. This is because conflicts and issues can arise when stakeholders have different views or requirements for the solution. By effectively managing these conflicts and issues, you can ensure that all stakeholders continue to support the solution, which is crucial for the success of the project.", "Option 2: While ensuring that requirements and designs are supportable within technology standards is important, it is not the key aim of conflict and issue management in the process of approving requirements.", "Option 3: Justifying investment in a solution is more related to the business case and financial analysis, not directly linked to the conflict and issue management in the process of approving requirements.", "Option 4: Keeping accurate records of current approval status is a part of requirements management and communication, not the main aim of conflict and issue management."]}, {"q": "During the requirements analysis phase of a project at XYZ Corporation, the business analyst is considering potential solutions. According to BABOK® v3, who should the business analyst primarily collaborate with to analyze potential value and recommend a solution?", "o": ["Tester", "Project Manager", "End User", "Project Sponsor"], "k": 3, "e": ["According to BABOK® v3, during the 'Analyze Potential Value and Recommend Solution' task, the business analyst primarily collaborates with the project sponsor. The sponsor is the one who has the authority to make decisions about the project and its direction, and thus, their input is crucial in analyzing the potential value of a solution and making a recommendation.Option Option2: While the end user's perspective is important in the requirements gathering phase, during the 'Analyze Potential Value and Recommend Solution' task, the business analyst primarily collaborates with the project sponsor, not the end user.Option Option3: The tester's role is important for verifying that the solution meets the requirements and works as expected. However, during the 'Analyze Potential Value and Recommend Solution' task, the business analyst primarily collaborates with the project sponsor.Option Option4: While the project manager is responsible for overseeing the project execution, during the 'Analyze Potential Value and Recommend Solution' task, the business analyst primarily collaborates with the project sponsor, not the project manager."]}, {"q": "Which of the following is a guideline or tool, often provided by third parties, used for defining design options?", "o": ["Solution scope", "Existing solutions", "Traced requirements", "Future state description"], "k": 1, "e": ["Existing solutions are a guideline or tool often provided by third parties that can be used for defining design options. By examining existing solutions, you can identify possible approaches for the current problem."]}, {"q": "As a Business Analyst, you are conducting a review meeting for a proposed solution. Which of the following activities would NOT typically be part of your review process?", "o": ["Initiating a brainstorming session", "Conducting a technical review", "Organizing a walkthrough", "Performing an inspection"], "k": 0, "e": ["In the context of a review process, the Business Analyst would typically conduct a technical review, perform an inspection, and organize a walkthrough. These activities are all aimed at validating the proposed solution against the requirements and identifying any potential issues or areas for improvement. A brainstorming session, on the other hand, is not typically part of a review process. While brainstorming can be a valuable tool for generating ideas and solutions, it is generally used earlier in the process, during the requirements gathering and solution design stages.", "Option 1: A technical review is a common part of a review process, where the technical aspects of a proposed solution are closely examined to ensure they meet the requirements and are feasible.", "Option 2: An inspection is a detailed examination of a product or system, and is typically a part of a review process to ensure the proposed solution meets the requirements.", "Option 3: A walkthrough is a stepbystep presentation of a proposed solution, often used in a review process to ensure all stakeholders have a clear understanding of the solution and to identify any potential issues or areas for improvement."]}, {"q": "In which state should elicitation results be in order to begin modelling of requirements?", "o": ["Confirmed", "Documented", "Unconfirmed", "Any"], "k": 0, "e": ["Elicitation results should be in a \"Confirmed\" state before beginning the modeling of requirements. This means that the gathered information has been validated and clarified, ensuring its accuracy and consistency."]}, {"q": "Which of the following tasks is included in the requirements analysis and design definition knowledge area?", "o": ["Analyze potential value and recommend solution", "Define change strategy", "Assess requirements changes", "Recommend actions to increase solution value"], "k": 0, "e": ["The task of \"Analyzing potential value and recommending a solution\" is included in the \"Requirements Analysis and Design Definition\" knowledge area. This task is about identifying the value of requirements and proposing actions to increase the value."]}, {"q": "In the process of analyzing potential value and recommending a solution, you have identified a requirement that is represented in a general manner. What is the most likely outcome of this requirement during a change?", "o": ["The requirement is less likely to be revised as it does not reference specific applications or departments.", "The requirement is likely to be revised heavily due to its specific association with a solution.", "The requirement is less likely to be revised due to its general representation.", "The requirement is likely to be revised as it is not intended for reuse."], "k": 2, "e": ["Requirements that are represented in a general manner are less likely to be revised during a change. This is because these requirements are not tied to a specific solution, application, or department, allowing them to be more adaptable to changes in the project or business environment.", "Option 1: This option is incorrect because requirements that are associated with a specific solution are more likely to be revised during a change as they may not adapt well to new solutions.", "Option 2: This option is incorrect because the statement is contradictory. A requirement not referencing specific applications or departments would be less likely to be revised, however, this is not the characteristic of the requirement in question.", "Option 3: This option is incorrect because requirements that are not intended for reuse can still be subject to revisions, especially if they are associated with specific solutions, applications, or departments."]}, {"q": "Which of the following techniques would a business analyst (BA) use to conduct elicitation?", "o": ["Prioritization", "Reviews", "Estimation", "Observation"], "k": 3, "e": ["Observation is one of the techniques used by a business analyst to conduct elicitation. It involves actively observing and documenting activities and interactions to gather information."]}];
+const L="ABCDEFGH";
+const $=id=>document.getElementById(id);
+let name="";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function start(){
+  name=$("name").value.trim();
+  if(!name){$("err").textContent="Vui lòng nhập tên trước khi làm bài.";return}
+  $("who").textContent="Người làm bài: "+name;
+  $("start").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  render();
+}
+function render(){
+  $("list").innerHTML=Q.map((q,i)=>`
+    <div class="card" id="c${i}">
+      <p class="q"><small>Câu ${i+1}/${Q.length}</small><br>${esc(q.q)}</p>
+      ${q.o.map((o,j)=>`<label class="opt" id="o${i}_${j}"><input type="radio" name="q${i}" value="${j}"><span><b>${L[j]}.</b> ${esc(o)}</span></label>`).join("")}
+      <div class="badge" id="b${i}"></div><div id="e${i}"></div>
+    </div>`).join("");
+}
+function submit(){
+  let score=0;
+  Q.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name=q${i}]:checked`);
+    const ans=sel?+sel.value:-1;
+    document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.disabled=true);
+    $("c"+i).classList.add("done");
+    $(`o${i}_${q.k}`).classList.add("correct");
+    $("e"+i).innerHTML=`<div class="exp"><p class="t">Giải thích</p>${q.e.map(x=>`<p>${esc(x)}</p>`).join("")}</div>`;
+    const b=$("b"+i);
+    if(ans===q.k){score++;b.className="badge ok";b.textContent="✓ Đúng"}
+    else{
+      if(ans>=0)$(`o${i}_${ans}`).classList.add("wrong");
+      b.className="badge ko";
+      b.textContent=(ans<0?"✗ Chưa trả lời":"✗ Sai")+" — Đáp án đúng: "+L[q.k]+". "+q.o[q.k];
+    }
+  });
+  $("submit").classList.add("hidden");
+  const r=$("result");
+  r.classList.remove("hidden");
+  r.innerHTML=`${esc(name)}, kết quả của bạn:<br><span>${score}/${Q.length}</span> câu đúng`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("go").onclick=start;
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")start()});
+$("submit").onclick=submit;
+</script>
+</body>
+</html>
