@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECBA Test 2.5</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1f2937;--mu:#6b7280;--pr:#2563eb;--ok:#16a34a;--okb:#dcfce7;--ko:#dc2626;--kob:#fee2e2;--bd:#e5e7eb}
+@media(prefers-color-scheme:dark){:root{--bg:#111827;--card:#1f2937;--tx:#f3f4f6;--mu:#9ca3af;--bd:#374151;--okb:#14532d;--kob:#7f1d1d}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+header{background:var(--pr);color:#fff;text-align:center;padding:22px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:1.5rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+main{max-width:760px;margin:0 auto;padding:20px 14px 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:16px}
+.start{text-align:center;margin-top:40px}
+input[type=text]{width:100%;max-width:340px;padding:11px 14px;font-size:1rem;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+button{background:var(--pr);color:#fff;border:0;border-radius:8px;padding:11px 26px;font-size:1rem;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.err{color:var(--ko);font-size:.9rem;min-height:1.3em;margin-top:6px}
+.q{font-weight:600;margin:0 0 12px}
+.q small{color:var(--mu);font-weight:500}
+label.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer}
+label.opt:hover{border-color:var(--pr)}
+label.opt input{margin-top:4px}
+.done label.opt{cursor:default}
+.opt.correct{background:var(--okb);border-color:var(--ok)}
+.opt.wrong{background:var(--kob);border-color:var(--ko)}
+.badge{font-weight:700;margin-top:6px;font-size:.95rem}
+.badge.ok{color:var(--ok)}.badge.ko{color:var(--ko)}
+.result{text-align:center;font-size:1.3rem;font-weight:700}
+.result span{color:var(--pr);font-size:1.9rem}
+.exp{margin-top:10px;padding:12px;border-left:4px solid var(--pr);background:var(--bg);border-radius:6px;font-size:.93rem}
+.exp p{margin:0 0 8px}.exp p:last-child{margin:0}
+.exp .t{font-weight:700;color:var(--pr)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1>ECBA Test 2.5</h1><p id="who"></p></header>
+<main>
+  <section id="start" class="card start">
+    <h2>Nhập tên của bạn để bắt đầu</h2>
+    <input id="name" type="text" placeholder="Họ và tên" autocomplete="name">
+    <div class="err" id="err"></div>
+    <button id="go">Bắt đầu làm bài</button>
+  </section>
+  <section id="quiz" class="hidden">
+    <div id="result" class="card result hidden"></div>
+    <div id="list"></div>
+    <div style="text-align:center"><button id="submit">Nộp bài</button></div>
+  </section>
+</main>
+<script>
+const Q=[{"q": "Which type of elicitation involves obtaining information by controlled test?", "o": ["Interview", "Research", "Collaboration", "Experiment"], "k": 3, "e": ["Experiment is a type of elicitation that involves obtaining information through controlled tests or experiments."]}, {"q": "You are a business analyst working on a project to automate certain manual processes in your organization. Your team is discussing the potential benefits and drawbacks of the proposed solution. Which of the following options best represents the 'why' of the proposed change?", "o": ["The data and information that will be managed by the new system.", "The reasons and justifications for implementing the solution.", "The sequence of activities that will be performed during the implementation.", "The roles and responsibilities of the employees after the implementation of the solution."], "k": 1, "e": ["The 'why' of a change in business analysis is best represented by the reasons and justifications for implementing the solution. This includes understanding the problem or opportunity that the change addresses, the benefits that the change is expected to deliver, and the impact of not implementing the change.", "Option 1: The roles and responsibilities of the employees after the implementation of the solution represent the 'who' of the change, not the 'why'.", "Option 3: The sequence of activities that will be performed during the implementation represents the 'how' of the change, not the 'why'.", "Option 4: The data and information that will be managed by the new system represent the 'what' of the change, not the 'why'."]}, {"q": "A business analyst is conducting a Business Capability Analysis for a new software project. She has just finished documenting the necessary skills and processes. What should she focus on next?", "o": ["Risk Assessment", "Stakeholder Analysis", "Budgeting", "Technology"], "k": 3, "e": ["In a Business Capability Analysis, after documenting the necessary skills and processes, the next step is to focus on the technology required to support these skills and processes. Technology is a key component of Business Capability Analysis as it enables the processes and skills to be effectively utilized.Option Option1: Budgeting is not a key component of Business Capability Analysis. It is a part of the planning phase, which comes after the analysis.Option Option3: Stakeholder Analysis is not a part of Business Capability Analysis. It is a separate task that identifies people, groups, or organizations that could impact or be impacted by a decision, activity, or outcome of the project.Option Option4: Risk Assessment is not a part of Business Capability Analysis. It is a separate task that identifies, evaluates, and prioritizes uncertainties that could impact the project's objectives."]}, {"q": "You are a business analyst working on a project to develop a new software application. During the 'Analyze Potential Value and Recommend Solution' phase, you have conducted a risk analysis. Which of the following best describes how the results of this risk analysis would be used?", "o": ["To calculate the expected benefit of the solution.", "To ignore the risks associated with the design options.", "To determine the scope of the solution that is being delivered.", "To assess the level of risk associated with the design options or initiative."], "k": 3, "e": ["The results of the risk analysis are used to assess the level of risk associated with the design options or initiative. This involves identifying potential risks, assessing their likelihood and potential impact, and determining how they should be managed. This information is crucial in making informed decisions about which solution to recommend.", "Option 1: While the scope of the solution may be influenced by the results of the risk analysis, it is not the primary purpose of conducting a risk analysis.", "Option 2: Ignoring the risks associated with the design options is not a recommended practice in business analysis. The purpose of risk analysis is to identify and assess these risks, not to ignore them.", "Option 3: While the expected benefit of the solution may be influenced by the results of the risk analysis, calculating the expected benefit is not the primary purpose of conducting a risk analysis."]}, {"q": "In the context of a new CRM system implementation in a large retail company, the Implementation Subject Matter Expert (SME) is involved in the requirements traceability process. What would be the primary role of the Implementation SME in this context?", "o": ["They trace test cases to requirements.", "They approve various relationships between the requirements.", "They are affected by how and when requirements are implemented.", "They ensure that the solution being developed meets the business need and brings awareness of dependencies between solution components during implementation."], "k": 3, "e": ["The Implementation Subject Matter Expert plays a crucial role in ensuring that the solution being developed aligns with the business needs. They also bring awareness of dependencies between solution components during the implementation phase. This role is critical in managing the complexity of largescale implementations like a CRM system in a retail company, where various components and systems need to work together seamlessly.", "Option 1: While the Implementation SME may be involved in tracing test cases to requirements, this is not their primary role. This task is typically handled by the QA or testing team.", "Option 2: Approving various relationships between the requirements is typically the role of a Business Analyst or a Requirements Engineer, not the Implementation SME.", "Option 3: Although the Implementation SME can be affected by how and when requirements are implemented, this is more of an outcome of the process rather than their primary role."]}, {"q": "Which technique would the business analyst (BA) consider to show the transformation of data?", "o": ["Sequence diagram", "Data modelling", "Flowchart", "Data flow diagram"], "k": 3, "e": ["A data flow diagram (DFD) is a technique that a business analyst would consider to show the transformation of data within a system. DFDs are commonly used to represent how data moves and is processed within a system."]}, {"q": "What requirements are good candidates for reuse?", "o": ["Requirements without direct ties to a particular tool", "Requirements expressed in more detail", "Requirements with specific references to departments", "Requirements at low levels of abstraction"], "k": 0, "e": ["Requirements that do not have direct ties to a specific tool are generally good candidates for reuse. They can be applied in different contexts and projects."]}, {"q": "Your company is preparing to launch a new product and you, as a Business Analyst, are tasked with eliciting requirements. Which of the following would NOT be a consideration when selecting an elicitation technique?", "o": ["The tasks needed to prepare, execute, and complete each technique", "Techniques specifically suited to the situation", "The company's stock performance", "Techniques commonly used in similar product launches"], "k": 2, "e": ["The company's stock performance is not a direct consideration when selecting an elicitation technique. While it may indirectly influence the overall strategy of the project, it does not directly affect the choice of elicitation techniques. Elicitation techniques should be chosen based on their suitability to the situation, the tasks involved, and past success in similar initiatives.", "Option 1: This option is incorrect because techniques commonly used in similar initiatives can be a valid consideration when selecting an elicitation technique. Past success can be a good predictor of future success.", "Option 3: This option is incorrect because techniques specifically suited to the situation should indeed be a consideration when selecting an elicitation technique. The specific context and requirements of a situation can greatly affect the effectiveness of different techniques.", "Option 4: This option is incorrect because the tasks needed to prepare, execute, and complete each technique are a valid consideration when selecting an elicitation technique. The resources and time required by different techniques can greatly affect their feasibility and effectiveness."]}, {"q": "You are a business analyst working on a project to improve the online shopping experience for a large retail company. The stakeholders include representatives from different departments such as marketing, IT, sales, and customer service. Which of the following factors would you consider when selecting the elicitation techniques for requirements gathering?", "o": ["The budget allocated for the project and the food preferences of the stakeholders.", "The personal preferences of the stakeholders and the techniques commonly used in similar initiatives.", "The number of stakeholders and the techniques commonly used in similar initiatives.", "The suitability of techniques to the situation, tasks required for each technique, and the techniques commonly used in similar initiatives."], "k": 3, "e": ["The correct answer is Option 3. When selecting elicitation techniques, a business analyst considers the suitability of techniques to the situation, tasks required for each technique, and the techniques commonly used in similar initiatives. These factors ensure that the elicitation process is effective and efficient, and that it leads to the gathering of accurate and useful requirements.", "Option 1: Option 1 is incorrect. While the budget can impact the project, it does not directly influence the selection of elicitation techniques. Additionally, the food preferences of stakeholders are irrelevant to this process.", "Option 2: Option 2 is incorrect. While the number of stakeholders can influence the complexity of the elicitation process, it is not a determining factor in the selection of elicitation techniques.", "Option 4: Option 4 is incorrect. Personal preferences of stakeholders do not influence the selection of elicitation techniques. The focus should be on the suitability of the technique to the situation and the tasks required for each technique."]}, {"q": "As a Business Analyst, you are working on a project that involves multiple stakeholders with different interests and levels of influence. How would the Stakeholder Engagement Approach be most effectively utilized in the Manage Stakeholder Collaboration process?", "o": ["It defines how to engage with stakeholders and manage them.", "It identifies irrelevant stakeholders.", "It outlines ways to ignore stakeholder input.", "It describes how to avoid stakeholders."], "k": 0, "e": ["The Stakeholder Engagement Approach is a key tool in the Manage Stakeholder Collaboration process. It provides a structured way to identify and understand stakeholders, their interests, and their influence on the project. It helps in planning how to engage with stakeholders, manage their expectations, and facilitate their collaboration. Avoiding or ignoring stakeholders is not a good practice as it can lead to misunderstandings, conflicts, and lack of support for the project.", "Option 1: Avoiding stakeholders is not a good practice. It can lead to misunderstandings, conflicts, and lack of support for the project.", "Option 2: Ignoring stakeholder input is not a good practice. Stakeholders can provide valuable insights and feedback that can contribute to the success of the project.", "Option 3: Identifying irrelevant stakeholders is not the primary purpose of the Stakeholder Engagement Approach. All stakeholders are relevant in some way and their interests and influence need to be understood."]}];
+const L="ABCDEFGH";
+const $=id=>document.getElementById(id);
+let name="";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function start(){
+  name=$("name").value.trim();
+  if(!name){$("err").textContent="Vui lòng nhập tên trước khi làm bài.";return}
+  $("who").textContent="Người làm bài: "+name;
+  $("start").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  render();
+}
+function render(){
+  $("list").innerHTML=Q.map((q,i)=>`
+    <div class="card" id="c${i}">
+      <p class="q"><small>Câu ${i+1}/${Q.length}</small><br>${esc(q.q)}</p>
+      ${q.o.map((o,j)=>`<label class="opt" id="o${i}_${j}"><input type="radio" name="q${i}" value="${j}"><span><b>${L[j]}.</b> ${esc(o)}</span></label>`).join("")}
+      <div class="badge" id="b${i}"></div><div id="e${i}"></div>
+    </div>`).join("");
+}
+function submit(){
+  let score=0;
+  Q.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name=q${i}]:checked`);
+    const ans=sel?+sel.value:-1;
+    document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.disabled=true);
+    $("c"+i).classList.add("done");
+    $(`o${i}_${q.k}`).classList.add("correct");
+    $("e"+i).innerHTML=`<div class="exp"><p class="t">Giải thích</p>${q.e.map(x=>`<p>${esc(x)}</p>`).join("")}</div>`;
+    const b=$("b"+i);
+    if(ans===q.k){score++;b.className="badge ok";b.textContent="✓ Đúng"}
+    else{
+      if(ans>=0)$(`o${i}_${ans}`).classList.add("wrong");
+      b.className="badge ko";
+      b.textContent=(ans<0?"✗ Chưa trả lời":"✗ Sai")+" — Đáp án đúng: "+L[q.k]+". "+q.o[q.k];
+    }
+  });
+  $("submit").classList.add("hidden");
+  const r=$("result");
+  r.classList.remove("hidden");
+  r.innerHTML=`${esc(name)}, kết quả của bạn:<br><span>${score}/${Q.length}</span> câu đúng`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("go").onclick=start;
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")start()});
+$("submit").onclick=submit;
+</script>
+</body>
+</html>
