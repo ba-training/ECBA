@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECBA Test 2.6</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1f2937;--mu:#6b7280;--pr:#2563eb;--ok:#16a34a;--okb:#dcfce7;--ko:#dc2626;--kob:#fee2e2;--bd:#e5e7eb}
+@media(prefers-color-scheme:dark){:root{--bg:#111827;--card:#1f2937;--tx:#f3f4f6;--mu:#9ca3af;--bd:#374151;--okb:#14532d;--kob:#7f1d1d}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+header{background:var(--pr);color:#fff;text-align:center;padding:22px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:1.5rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+main{max-width:760px;margin:0 auto;padding:20px 14px 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:16px}
+.start{text-align:center;margin-top:40px}
+input[type=text]{width:100%;max-width:340px;padding:11px 14px;font-size:1rem;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+button{background:var(--pr);color:#fff;border:0;border-radius:8px;padding:11px 26px;font-size:1rem;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.err{color:var(--ko);font-size:.9rem;min-height:1.3em;margin-top:6px}
+.q{font-weight:600;margin:0 0 12px}
+.q small{color:var(--mu);font-weight:500}
+label.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer}
+label.opt:hover{border-color:var(--pr)}
+label.opt input{margin-top:4px}
+.done label.opt{cursor:default}
+.opt.correct{background:var(--okb);border-color:var(--ok)}
+.opt.wrong{background:var(--kob);border-color:var(--ko)}
+.badge{font-weight:700;margin-top:6px;font-size:.95rem}
+.badge.ok{color:var(--ok)}.badge.ko{color:var(--ko)}
+.result{text-align:center;font-size:1.3rem;font-weight:700}
+.result span{color:var(--pr);font-size:1.9rem}
+.exp{margin-top:10px;padding:12px;border-left:4px solid var(--pr);background:var(--bg);border-radius:6px;font-size:.93rem}
+.exp p{margin:0 0 8px}.exp p:last-child{margin:0}
+.exp .t{font-weight:700;color:var(--pr)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1>ECBA Test 2.6</h1><p id="who"></p></header>
+<main>
+  <section id="start" class="card start">
+    <h2>Nhập tên của bạn để bắt đầu</h2>
+    <input id="name" type="text" placeholder="Họ và tên" autocomplete="name">
+    <div class="err" id="err"></div>
+    <button id="go">Bắt đầu làm bài</button>
+  </section>
+  <section id="quiz" class="hidden">
+    <div id="result" class="card result hidden"></div>
+    <div id="list"></div>
+    <div style="text-align:center"><button id="submit">Nộp bài</button></div>
+  </section>
+</main>
+<script>
+const Q=[{"q": "During a project, the business analyst is focusing on identifying potential value and recommending a solution. The project involves tracking the progress of physical items through a supply chain. Which technique is NOT typically used for this purpose?", "o": ["Decision Analysis", "Stakeholder Analysis", "Item Tracking", "Risk Assessment"], "k": 2, "e": ["The technique of 'Item Tracking' is not typically used when identifying potential value and recommending a solution. This technique is more relevant to operational tasks such as supply chain management or inventory control. In the context of business analysis, techniques such as Stakeholder Analysis, Risk Assessment, and Decision Analysis are more commonly used to identify improvement opportunities and make informed decisions.", "Option 2: Stakeholder Analysis is often used in the process of identifying potential value and recommending solutions. This technique involves identifying key stakeholders and understanding their influence and interest in the project.", "Option 3: Risk Assessment is a crucial technique used in business analysis. It helps identify potential threats and vulnerabilities that could impact the project's success.", "Option 4: Decision Analysis is a systematic, quantitative, and visual approach to addressing and evaluating important choices confronted by businesses. Therefore, it is typically used in the process of identifying potential value and recommending solutions."]}, {"q": "You are a Business Analyst working on a project. The project has a critical requirement that has recently undergone a substantial change. This change is expected to have a significant impact on the project. Which tool would be most beneficial for you to analyze the implications of this change?", "o": ["Traceability", "CostBenefit Analysis", "PEST Analysis", "SWOT Analysis"], "k": 0, "e": ["Traceability is the correct answer. Traceability is a tool that allows business analysts to track the relationship between requirements and other deliverables. This is particularly useful when a requirement changes, as it allows the analyst to understand the impact of the change on the project as a whole. This includes impacts on the project's scope, cost, schedule, and quality. Therefore, traceability is the most useful tool for analyzing the implications of a significant change in a requirement.", "Option 1: SWOT Analysis is a strategic planning tool used to identify and analyze the Strengths, Weaknesses, Opportunities, and Threats related to business competition or project planning. It is not typically used to analyze the implications of a change in a project requirement.", "Option 2: PEST Analysis is a framework that strategy consultants use to scan the external macroenvironment in which a firm operates. PEST is an acronym for Political, Economic, Social, and Technological factors, which are used to assess the market for a business or organizational unit. It is not typically used to analyze the implications of a change in a project requirement.", "Option 3: Cost-Benefit Analysis is a process used by organizations to analyze decisions. The business or analyst sums the benefits of a situation or action and then subtracts the costs associated with taking that action. It is not typically used to analyze the implications of a change in a project requirement."]}, {"q": "In the context of Requirements Analysis and Design Definition, your team is considering several potential solutions to meet a newly identified need in your organization. How should changes in the business environment be taken into account during this process?", "o": ["Changes and needs are interchangeable; therefore, any change will automatically meet the needs.", "Changes should be ignored as they are unrelated to the identified needs.", "Changes in the business environment could lead to new needs, affecting the potential value of the proposed solutions.", "Changes in the business environment cannot affect the identified needs."], "k": 2, "e": ["In the Requirements Analysis and Design Definition process, it is crucial to consider changes in the business environment. These changes can lead to new needs or modify existing ones, thus affecting the potential value of the proposed solutions. Ignoring these changes could result in solutions that no longer meet the organization's needs or fail to maximize value.", "Option 1: Ignoring changes in the business environment can lead to solutions that do not meet the organization's needs or fail to maximize value. This approach is not recommended.", "Option 2: Changes in the business environment can indeed affect the identified needs by creating new needs or modifying existing ones. This option is incorrect.", "Option 4: Changes and needs are not interchangeable terms. A change in the business environment can lead to new needs, but it does not automatically meet these needs. This option is incorrect."]}, {"q": "Which core concept defines a specific way of satisfying one or more needs in a context?", "o": ["Value", "Change", "Solution", "Priority"], "k": 2, "e": ["The core concept \"Solution\" defines a specific way of satisfying one or more needs in a context. It relates to the creation or design of solutions to address business needs."]}, {"q": "An atomic requirement:", "o": ["contains no extraneous or unnecessary content.", "uses common terminology understood by the audience.", "aligns with the identified needs of the stakeholders.", "is understood independently of other requirements or designs."], "k": 3, "e": ["An atomic requirement is one that stands on its own and is understood independently of other requirements or designs. It should be selfcontained and not dependent on external factors."]}, {"q": "You are a Business Analyst working on a new software project. The project team is in the process of analyzing potential value and recommending a solution. Which of the following techniques would NOT typically be used in this stage according to BABOK® v3?", "o": ["Risk Analysis and Management", "Collaborative Games", "Brainstorming", "Lessons Learned"], "k": 2, "e": ["Brainstorming is a useful technique for generating ideas and solutions in a group setting. However, it is typically used in the earlier stages of a project to identify potential solutions, not in the stage of analyzing potential value and recommending a solution. In this stage, techniques such as Collaborative Games, Lessons Learned, and Risk Analysis and Management would be more commonly used according to BABOK® v3.", "Option 2: Collaborative Games can be a useful technique in this stage as they can help to engage stakeholders and encourage creative thinking about potential solutions.", "Option 3: Lessons Learned is a technique that involves reviewing past experiences and results to inform future decisions and actions. It can be particularly useful in this stage as it can help to identify potential risks and benefits of different solutions.", "Option 4: Risk Analysis and Management is a crucial technique in this stage as it involves identifying, assessing, and managing potential risks associated with different solutions."]}, {"q": "As a Business Analyst, you are using the Business Model Canvas to analyze the business model of your organization. Which of the following is NOT a part of the Business Model Canvas?", "o": ["Channels", "Customer Segments", "Value Propositions", "Employee Evaluation"], "k": 3, "e": ["The Business Model Canvas is a strategic management and lean startup template for developing new or documenting existing business models. It consists of nine building blocks: Customer Segments, Value Propositions, Channels, Customer Relationships, Revenue Streams, Key Resources, Key Activities, Key Partnerships, and Cost Structure. Therefore, Employee Evaluation is not a part of the Business Model Canvas.", "Option 1: Value Propositions is one of the nine building blocks of the Business Model Canvas. It describes the bundle of products and services that create value for a specific Customer Segment.", "Option 2: Customer Segments is one of the nine building blocks of the Business Model Canvas. It defines the different groups of people or organizations an enterprise aims to reach and serve.", "Option 3: Channels is one of the nine building blocks of the Business Model Canvas. It describes how a company communicates with and reaches its Customer Segments to deliver a Value Proposition."]}, {"q": "Which of the following techniques is used when recommendations for improvement are supported by objective and quantitative evidence?", "o": ["Observation", "Estimation", "Functional decomposition", "Balanced scorecard"], "k": 3, "e": ["The Balanced Scorecard is a technique that helps measure and improve the performance of an organization using a balanced set of quantitative and qualitative measures. It supports recommendations for improvement based on objective evidence."]}, {"q": "Establishing the design option that is appropriate to meet the enterprise's requirements is the purpose of which task?", "o": ["Define design options", "Analyze potential value and recommend solution", "Specify and model requirements", "Define requirements architecture"], "k": 1, "e": ["The task of analyzing potential value and recommending a solution is focused on establishing the design option that is appropriate to meet the enterprise's requirements."]}, {"q": "Stakeholders commonly face challenges in prioritizing requirements due to:", "o": ["different perceived values.", "inability to work with others.", "project time constraints.", "lack of knowledge."], "k": 0, "e": ["Stakeholders often face challenges in prioritizing requirements due to different perceived values and priorities."]}];
+const L="ABCDEFGH";
+const $=id=>document.getElementById(id);
+let name="";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function start(){
+  name=$("name").value.trim();
+  if(!name){$("err").textContent="Vui lòng nhập tên trước khi làm bài.";return}
+  $("who").textContent="Người làm bài: "+name;
+  $("start").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  render();
+}
+function render(){
+  $("list").innerHTML=Q.map((q,i)=>`
+    <div class="card" id="c${i}">
+      <p class="q"><small>Câu ${i+1}/${Q.length}</small><br>${esc(q.q)}</p>
+      ${q.o.map((o,j)=>`<label class="opt" id="o${i}_${j}"><input type="radio" name="q${i}" value="${j}"><span><b>${L[j]}.</b> ${esc(o)}</span></label>`).join("")}
+      <div class="badge" id="b${i}"></div><div id="e${i}"></div>
+    </div>`).join("");
+}
+function submit(){
+  let score=0;
+  Q.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name=q${i}]:checked`);
+    const ans=sel?+sel.value:-1;
+    document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.disabled=true);
+    $("c"+i).classList.add("done");
+    $(`o${i}_${q.k}`).classList.add("correct");
+    $("e"+i).innerHTML=`<div class="exp"><p class="t">Giải thích</p>${q.e.map(x=>`<p>${esc(x)}</p>`).join("")}</div>`;
+    const b=$("b"+i);
+    if(ans===q.k){score++;b.className="badge ok";b.textContent="✓ Đúng"}
+    else{
+      if(ans>=0)$(`o${i}_${ans}`).classList.add("wrong");
+      b.className="badge ko";
+      b.textContent=(ans<0?"✗ Chưa trả lời":"✗ Sai")+" — Đáp án đúng: "+L[q.k]+". "+q.o[q.k];
+    }
+  });
+  $("submit").classList.add("hidden");
+  const r=$("result");
+  r.classList.remove("hidden");
+  r.innerHTML=`${esc(name)}, kết quả của bạn:<br><span>${score}/${Q.length}</span> câu đúng`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("go").onclick=start;
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")start()});
+$("submit").onclick=submit;
+</script>
+</body>
+</html>
