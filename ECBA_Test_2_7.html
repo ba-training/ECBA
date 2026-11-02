@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECBA Test 2.7</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1f2937;--mu:#6b7280;--pr:#2563eb;--ok:#16a34a;--okb:#dcfce7;--ko:#dc2626;--kob:#fee2e2;--bd:#e5e7eb}
+@media(prefers-color-scheme:dark){:root{--bg:#111827;--card:#1f2937;--tx:#f3f4f6;--mu:#9ca3af;--bd:#374151;--okb:#14532d;--kob:#7f1d1d}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+header{background:var(--pr);color:#fff;text-align:center;padding:22px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:1.5rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+main{max-width:760px;margin:0 auto;padding:20px 14px 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:16px}
+.start{text-align:center;margin-top:40px}
+input[type=text]{width:100%;max-width:340px;padding:11px 14px;font-size:1rem;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+button{background:var(--pr);color:#fff;border:0;border-radius:8px;padding:11px 26px;font-size:1rem;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.err{color:var(--ko);font-size:.9rem;min-height:1.3em;margin-top:6px}
+.q{font-weight:600;margin:0 0 12px}
+.q small{color:var(--mu);font-weight:500}
+label.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer}
+label.opt:hover{border-color:var(--pr)}
+label.opt input{margin-top:4px}
+.done label.opt{cursor:default}
+.opt.correct{background:var(--okb);border-color:var(--ok)}
+.opt.wrong{background:var(--kob);border-color:var(--ko)}
+.badge{font-weight:700;margin-top:6px;font-size:.95rem}
+.badge.ok{color:var(--ok)}.badge.ko{color:var(--ko)}
+.result{text-align:center;font-size:1.3rem;font-weight:700}
+.result span{color:var(--pr);font-size:1.9rem}
+.exp{margin-top:10px;padding:12px;border-left:4px solid var(--pr);background:var(--bg);border-radius:6px;font-size:.93rem}
+.exp p{margin:0 0 8px}.exp p:last-child{margin:0}
+.exp .t{font-weight:700;color:var(--pr)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1>ECBA Test 2.7</h1><p id="who"></p></header>
+<main>
+  <section id="start" class="card start">
+    <h2>Nhập tên của bạn để bắt đầu</h2>
+    <input id="name" type="text" placeholder="Họ và tên" autocomplete="name">
+    <div class="err" id="err"></div>
+    <button id="go">Bắt đầu làm bài</button>
+  </section>
+  <section id="quiz" class="hidden">
+    <div id="result" class="card result hidden"></div>
+    <div id="list"></div>
+    <div style="text-align:center"><button id="submit">Nộp bài</button></div>
+  </section>
+</main>
+<script>
+const Q=[{"q": "Your team is working on a project with a tight deadline and you are in charge of prioritizing the requirements. One of the requirements is timesensitive. In this context, what does 'time sensitive' mean?", "o": ["The requirement needs to be tested after a specific time period postimplementation.", "The requirement takes a long time to implement.", "The requirement is dependent on other timebound tasks.", "The requirement retains its value only within a specific timeframe."], "k": 3, "e": ["In the context of prioritizing requirements, 'timesensitive' means that a requirement retains its value only within a specific timeframe. This could be due to various factors such as market conditions, regulatory changes, or technological advancements. Therefore, such requirements need to be implemented within that specific timeframe to ensure they deliver the expected value.", "Option 1: While some requirements may be dependent on other tasks, this is not what is meant by 'timesensitive'. Timesensitive refers to the value of the requirement within a specific timeframe.", "Option 2: The time taken to implement a requirement does not define its 'time sensitivity'. A timesensitive requirement is one that retains its value only within a specific timeframe, regardless of the implementation time.", "Option 3: The time taken to test a requirement postimplementation does not define its 'time sensitivity'. Time sensitivity refers to the timeframe within which the requirement retains its value."]}, {"q": "You are a business analyst working on a project to develop a new software product. The project is in the Requirements Analysis and Design Definition phase. You have identified several potential solutions to meet the business needs. Who should you primarily collaborate with to analyze potential value and recommend a solution?", "o": ["Project Manager", "Software Developer", "End User & Customer", "Tester"], "k": 2, "e": ["In the Requirements Analysis and Design Definition phase, business analysts primarily collaborate with end users and customers to analyze potential value and recommend a solution. This is because end users and customers are the ones who will use the product and thus, can provide valuable insights about the potential value of the solution. They can also provide feedback on the proposed solution and suggest improvements.", "Option 1: While the project manager is an important stakeholder, they are not primarily involved in analyzing potential value and recommending a solution. Their main role is to manage the project and ensure it is completed on time and within budget.", "Option 3: Software developers are responsible for implementing the solution, not analyzing its potential value or recommending it. They rely on the business analyst to provide them with the requirements and the recommended solution.", "Option 4: Testers are responsible for testing the solution to ensure it meets the requirements. They do not typically participate in analyzing potential value or recommending the solution."]}, {"q": "What is the relationship between two requirements called when one requirement can be deduced from another at a higher level?", "o": ["Derive", "Necessity", "Satisfy", "Effort"], "k": 0, "e": ["The relationship between two requirements where one requirement can be deduced from another at a higher level is called a \"Derive\" relationship. This indicates that a lowerlevel requirement can be derived from a higherlevel one."]}, {"q": "A software development company is conducting a focus group to understand user requirements for a new application. The focus group includes stakeholders from various departments. Who is primarily responsible for facilitating this focus group?", "o": ["The Sponsor", "The Software Developer", "The Project Manager", "The Business Analyst"], "k": 3, "e": ["The Business Analyst is primarily responsible for facilitating focus groups. They are responsible for gathering, analyzing, and prioritizing business needs. In a focus group, they guide the discussion to ensure that the necessary information is obtained. They also ensure that all participants have an opportunity to express their views.", "Option 1: The Project Manager is responsible for the overall management of the project, which includes planning, executing, monitoring, controlling, and closing the project. They may attend the focus group, but they are not primarily responsible for facilitating it.", "Option 2: The Sponsor is the individual or group who provides the financial resources for the project. They may participate in the focus group, but they are not the main facilitator.", "Option 4: The Software Developer is responsible for designing and coding the application. They may use the information from the focus group to inform their work, but they are not the main facilitator of the focus group."]}, {"q": "As a business analyst, you are conducting an interview with a stakeholder to gather information about a specific topic. Which of the following is NOT a typical goal of this interview?", "o": ["To understand the stakeholder's perspective and motivations", "To gain consensus among stakeholders", "To validate information gathered from other sources", "To gather detailed information about the specific topic"], "k": 1, "e": ["In the context of business analysis, the primary goal of an interview is to gather detailed information about a specific topic, understand the stakeholder's perspective and motivations, and validate information gathered from other sources. While gaining consensus among stakeholders is an important part of the business analysis process, it is not typically a goal of the interview process itself. Interviews are more focused on information gathering and understanding perspectives rather than decision-making or consensusbuilding.", "Option 1: Understanding the stakeholder's perspective and motivations is a key goal of the interview process in business analysis. This option is incorrect.", "Option 2: Validating information gathered from other sources is another important goal of the interview process. This option is incorrect.", "Option 4: Gathering detailed information about a specific topic is the primary goal of the interview process. This option is incorrect."]}, {"q": "A project manager is considering implementing a new software solution to increase efficiency. However, resources are constrained. What should the project manager do before deciding to implement the solution?", "o": ["Implement the solution without any further analysis.", "Develop a business case to assess the potential value and feasibility of the solution.", "Ignore the constraints and proceed with the solution.", "Ask for more resources without any justification."], "k": 1, "e": ["A business case is developed to assess the potential value and feasibility of a solution. It considers the constraints, benefits, and risks associated with the solution. In this scenario, the project manager should develop a business case before deciding to implement the solution to ensure it is feasible and will provide value given the resource constraints.", "Option 2: Implementing a solution without further analysis can lead to wasted resources if the solution is not feasible or does not provide the expected value.", "Option 3: Ignoring constraints is not a viable option as it can lead to project failure. Constraints should be considered in the decision-making process.", "Option 4: Asking for more resources without any justification is not a good practice. Resources should be allocated based on a thorough analysis and justification."]}, {"q": "A business analyst (BA) will regularly perform stakeholder analysis to understand which of the following?", "o": ["Changes in business needs", "Attitudes and influence", "Goals and objectives", "Communication channels"], "k": 1, "e": ["Business analysts regularly perform stakeholder analysis to understand the attitudes and influence of stakeholders. This is important for effective stakeholder engagement."]}, {"q": "As a Business Analyst, you are conducting elicitation activities for a new project. What would be your primary objectives during this process according to BABOK® v3?", "o": ["To create a project plan and allocate resources.", "To gather stakeholder feedback and evaluate the change implementation.", "To explore and discover information relevant to the change.", "To identify risks and develop a risk mitigation strategy."], "k": 2, "e": ["According to BABOK® v3, the primary objectives of conducting elicitation are to explore and discover information relevant to the change. This includes gathering requirements, clarifying uncertainties, and gaining a deep understanding of the business needs. This process is crucial to ensure that the proposed solution aligns with the business objectives and provides the expected value.", "Option 1: While gathering stakeholder feedback is an important part of the elicitation process, evaluating the change implementation is not the primary objective of elicitation. This task is typically performed during the evaluation phase.", "Option 2: Identifying risks and developing a risk mitigation strategy is a crucial part of the project management process but it is not the primary objective of the elicitation process in business analysis.", "Option 4: Creating a project plan and allocating resources are tasks associated with project management, not the primary objectives of the elicitation process in business analysis."]}, {"q": "Which business analysis activity ensures that a set of requirements or designs delivers business value and supports the organization's goal andobjectives?", "o": ["Define requirements architecture", "Define solution options", "Validate requirements", "Verify requirements"], "k": 2, "e": ["The business analysis activity that ensures that a set of requirements or designs delivers business value and supports the organization's goals and objectives is \"Validate requirements.\""]}, {"q": "Which type of requirements are temporary in nature?", "o": ["Transition requirements", "Stakeholder requirements", "Business requirements", "Solution requirements"], "k": 0, "e": ["Transition requirements are temporary in nature and describe conditions or constraints necessary for transitioning from the current state to the future state. They help manage the change process."]}];
+const L="ABCDEFGH";
+const $=id=>document.getElementById(id);
+let name="";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function start(){
+  name=$("name").value.trim();
+  if(!name){$("err").textContent="Vui lòng nhập tên trước khi làm bài.";return}
+  $("who").textContent="Người làm bài: "+name;
+  $("start").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  render();
+}
+function render(){
+  $("list").innerHTML=Q.map((q,i)=>`
+    <div class="card" id="c${i}">
+      <p class="q"><small>Câu ${i+1}/${Q.length}</small><br>${esc(q.q)}</p>
+      ${q.o.map((o,j)=>`<label class="opt" id="o${i}_${j}"><input type="radio" name="q${i}" value="${j}"><span><b>${L[j]}.</b> ${esc(o)}</span></label>`).join("")}
+      <div class="badge" id="b${i}"></div><div id="e${i}"></div>
+    </div>`).join("");
+}
+function submit(){
+  let score=0;
+  Q.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name=q${i}]:checked`);
+    const ans=sel?+sel.value:-1;
+    document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.disabled=true);
+    $("c"+i).classList.add("done");
+    $(`o${i}_${q.k}`).classList.add("correct");
+    $("e"+i).innerHTML=`<div class="exp"><p class="t">Giải thích</p>${q.e.map(x=>`<p>${esc(x)}</p>`).join("")}</div>`;
+    const b=$("b"+i);
+    if(ans===q.k){score++;b.className="badge ok";b.textContent="✓ Đúng"}
+    else{
+      if(ans>=0)$(`o${i}_${ans}`).classList.add("wrong");
+      b.className="badge ko";
+      b.textContent=(ans<0?"✗ Chưa trả lời":"✗ Sai")+" — Đáp án đúng: "+L[q.k]+". "+q.o[q.k];
+    }
+  });
+  $("submit").classList.add("hidden");
+  const r=$("result");
+  r.classList.remove("hidden");
+  r.innerHTML=`${esc(name)}, kết quả của bạn:<br><span>${score}/${Q.length}</span> câu đúng`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("go").onclick=start;
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")start()});
+$("submit").onclick=submit;
+</script>
+</body>
+</html>
