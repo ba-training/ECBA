@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECBA Test 2.4</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1f2937;--mu:#6b7280;--pr:#2563eb;--ok:#16a34a;--okb:#dcfce7;--ko:#dc2626;--kob:#fee2e2;--bd:#e5e7eb}
+@media(prefers-color-scheme:dark){:root{--bg:#111827;--card:#1f2937;--tx:#f3f4f6;--mu:#9ca3af;--bd:#374151;--okb:#14532d;--kob:#7f1d1d}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+header{background:var(--pr);color:#fff;text-align:center;padding:22px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:1.5rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+main{max-width:760px;margin:0 auto;padding:20px 14px 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:16px}
+.start{text-align:center;margin-top:40px}
+input[type=text]{width:100%;max-width:340px;padding:11px 14px;font-size:1rem;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+button{background:var(--pr);color:#fff;border:0;border-radius:8px;padding:11px 26px;font-size:1rem;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.err{color:var(--ko);font-size:.9rem;min-height:1.3em;margin-top:6px}
+.q{font-weight:600;margin:0 0 12px}
+.q small{color:var(--mu);font-weight:500}
+label.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer}
+label.opt:hover{border-color:var(--pr)}
+label.opt input{margin-top:4px}
+.done label.opt{cursor:default}
+.opt.correct{background:var(--okb);border-color:var(--ok)}
+.opt.wrong{background:var(--kob);border-color:var(--ko)}
+.badge{font-weight:700;margin-top:6px;font-size:.95rem}
+.badge.ok{color:var(--ok)}.badge.ko{color:var(--ko)}
+.result{text-align:center;font-size:1.3rem;font-weight:700}
+.result span{color:var(--pr);font-size:1.9rem}
+.exp{margin-top:10px;padding:12px;border-left:4px solid var(--pr);background:var(--bg);border-radius:6px;font-size:.93rem}
+.exp p{margin:0 0 8px}.exp p:last-child{margin:0}
+.exp .t{font-weight:700;color:var(--pr)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1>ECBA Test 2.4</h1><p id="who"></p></header>
+<main>
+  <section id="start" class="card start">
+    <h2>Nhập tên của bạn để bắt đầu</h2>
+    <input id="name" type="text" placeholder="Họ và tên" autocomplete="name">
+    <div class="err" id="err"></div>
+    <button id="go">Bắt đầu làm bài</button>
+  </section>
+  <section id="quiz" class="hidden">
+    <div id="result" class="card result hidden"></div>
+    <div id="list"></div>
+    <div style="text-align:center"><button id="submit">Nộp bài</button></div>
+  </section>
+</main>
+<script>
+const Q=[{"q": "What is the highest level of a data flow diagram called?", "o": ["Context diagram", "Prime level", "Rollup diagram", "Swim lane"], "k": 0, "e": ["The highest level of a data flow diagram is called the \"Context Diagram.\" It provides an overview of the entire system and how it interacts with external entities."]}, {"q": "A company is considering two potential solutions for a new project. Solution A has a lower initial cost but requires ongoing maintenance expenses. Solution B has a higher initial cost but virtually no maintenance expenses. According to BABOK® v3, which of the following would be the best way to determine the potential value of these solutions?", "o": ["Compare the maintenance cost of both solutions", "Consider the benefits delivered by each solution and the associated costs", "Consider only the tangible costs of both solutions", "Compare the initial cost of both solutions"], "k": 1, "e": ["According to BABOK® v3, the potential value of a solution is dependent on the benefits delivered by the solution and the associated costs. This includes both initial and ongoing costs, as well as tangible and intangible benefits. Therefore, when comparing two potential solutions, it is not sufficient to only consider the initial cost, maintenance cost, or tangible costs. All factors must be taken into account to determine the overall value of the solution.", "Option 1: Considering only the initial cost of the solutions does not take into account the ongoing maintenance costs, which can significantly impact the overall value of the solution.", "Option 2: Considering only the maintenance cost of the solutions does not take into account the initial costs, which can significantly impact the overall value of the solution.", "Option 3: Considering only the tangible costs of the solutions does not take into account the intangible benefits, which can significantly impact the overall value of the solution."]}, {"q": "In the context of requirements analysis and design definition, you are analyzing potential value and recommending a solution. What type of elicitation would be most suitable for this task?", "o": ["Analytical Elicitation", "Collaborative Elicitation", "Experimental Elicitation", "Observational Elicitation"], "k": 1, "e": ["Collaborative elicitation is the correct answer. This type of elicitation involves working together with stakeholders to identify requirements and potential solutions. It is particularly useful in tasks like analyzing potential value and recommending a solution, where the input and feedback of stakeholders can provide valuable insights.", "Option 1: Experimental elicitation, while useful in some contexts, is not the best choice for this task. This type of elicitation involves testing hypotheses and observing results, which is more suitable for tasks where the requirements are unclear or uncertain.", "Option 2: Observational elicitation involves observing users or systems in action to identify requirements. While this can be useful in some contexts, it is less suitable for tasks like analyzing potential value and recommending a solution, which require active collaboration and discussion.", "Option 3: Analytical elicitation involves analyzing existing documentation or systems to identify requirements. While this can be useful in some contexts, it is less suitable for tasks like analyzing potential value and recommending a solution, which require active collaboration and discussion."]}, {"q": "During the requirement life cycle management, what should a business analyst (BA) do to extend the value of requirements beyond the currentinitiative?", "o": ["Trace", "Maintain", "Prioritize", "Assess"], "k": 1, "e": ["To extend the value of requirements beyond the current initiative, a business analyst should \"Maintain\" the requirements. This involves keeping requirements up to date and ensuring they remain relevant. Maintenance extends their value for future initiatives."]}, {"q": "What is the optimum group size for brainstorming?", "o": ["The more individuals the better", "It doesn't matter how many individuals as long as the project manager is included", "A maximum of three individuals with a deep knowledge of the subject", "Six to eight individuals who represent a range of backgrounds"], "k": 3, "e": ["The optimum group size for brainstorming is typically six to eight individuals who represent a range of backgrounds. This group size encourages diversity of ideas and effective brainstorming."]}, {"q": "Your team is considering a change to the requirements of a project. As a business analyst, what should your primary concern be during the 'Assess Requirements Changes' task?", "o": ["Organizing stakeholder meetings", "Creating a financial analysis of the business", "Assigning tasks to the team members", "Evaluating the implications of proposed changes to requirements and designs"], "k": 3, "e": ["The primary purpose of the 'Assess Requirements Changes' task is to evaluate the implications of proposed changes to requirements and designs. This is crucial to understand the impact of the changes on the project and to decide whether to proceed with the changes or not.", "Option 1: Assigning tasks to the team members is not the primary concern during the 'Assess Requirements Changes' task. It might be a part of the overall project management but not specifically related to assessing changes in requirements.", "Option 2: Creating a financial analysis of the business is not directly related to the 'Assess Requirements Changes' task. While financial considerations might be a part of the overall assessment, it is not the primary concern in this task.", "Option 4: Organizing stakeholder meetings might be a part of the process of assessing changes in requirements, but it is not the primary concern. The main focus should be on evaluating the implications of the proposed changes."]}, {"q": "A stakeholder who verifies that prioritized requirements will deliver value from a customer perspective is the:", "o": ["domain subject matter expert.", "sponsor.", "regulator.", "end user."], "k": 3, "e": ["The end user is a stakeholder who can verify that prioritized requirements will deliver value from a customer perspective because they are the ones who will ultimately use the product or solution."]}, {"q": "Which business analysis technique draws on frameworks and methodologies such as Six Sigma and Lean?", "o": ["Document analysis", "Data flow diagrams", "Business rules analysis", "Process analysis"], "k": 3, "e": ["Process analysis is a business analysis technique that draws on frameworks and methodologies such as Six Sigma and Lean. It focuses on analyzing and improving business processes."]}, {"q": "Which of the following is a characteristic of predictive planning approach?", "o": ["Tasks are performed recurrently", "Information is captured in standardized templates", "Requirements are gathered through team interaction and feedback", "Activities are divided into iterations"], "k": 1, "e": ["A predictive planning approach involves capturing information in standardized templates as part of a structured and detailed planning process."]}, {"q": "Your organization is working on a new project which involves a significant amount of business analysis. As the business analyst, you are tasked with recommending a solution for managing the business analysis information. What should be your primary focus?", "o": ["To track issues with current information management processes", "To organize business analysis information in a functional and useful manner", "To brainstorm business analysis information management needs", "To reuse business analysis information in future initiatives"], "k": 1, "e": ["The primary goal of planning business analysis information management should be to organize the information in a functional and useful manner. This is crucial because wellorganized information can streamline the business analysis process, make it easier for stakeholders to understand the information, and ultimately lead to more informed decision-making.", "Option 1: While brainstorming business analysis information management needs is important, it is not the primary goal. The primary goal is to organize the information in a functional and useful manner.", "Option 2: Tracking issues with current information management processes is a part of the process, but it is not the primary goal. The primary goal is to organize the information in a functional and useful manner.", "Option 3: Reusing business analysis information in future initiatives can be beneficial, but it is not the primary goal. The primary goal is to organize the information in a functional and useful manner."]}];
+const L="ABCDEFGH";
+const $=id=>document.getElementById(id);
+let name="";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function start(){
+  name=$("name").value.trim();
+  if(!name){$("err").textContent="Vui lòng nhập tên trước khi làm bài.";return}
+  $("who").textContent="Người làm bài: "+name;
+  $("start").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  render();
+}
+function render(){
+  $("list").innerHTML=Q.map((q,i)=>`
+    <div class="card" id="c${i}">
+      <p class="q"><small>Câu ${i+1}/${Q.length}</small><br>${esc(q.q)}</p>
+      ${q.o.map((o,j)=>`<label class="opt" id="o${i}_${j}"><input type="radio" name="q${i}" value="${j}"><span><b>${L[j]}.</b> ${esc(o)}</span></label>`).join("")}
+      <div class="badge" id="b${i}"></div><div id="e${i}"></div>
+    </div>`).join("");
+}
+function submit(){
+  let score=0;
+  Q.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name=q${i}]:checked`);
+    const ans=sel?+sel.value:-1;
+    document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.disabled=true);
+    $("c"+i).classList.add("done");
+    $(`o${i}_${q.k}`).classList.add("correct");
+    $("e"+i).innerHTML=`<div class="exp"><p class="t">Giải thích</p>${q.e.map(x=>`<p>${esc(x)}</p>`).join("")}</div>`;
+    const b=$("b"+i);
+    if(ans===q.k){score++;b.className="badge ok";b.textContent="✓ Đúng"}
+    else{
+      if(ans>=0)$(`o${i}_${ans}`).classList.add("wrong");
+      b.className="badge ko";
+      b.textContent=(ans<0?"✗ Chưa trả lời":"✗ Sai")+" — Đáp án đúng: "+L[q.k]+". "+q.o[q.k];
+    }
+  });
+  $("submit").classList.add("hidden");
+  const r=$("result");
+  r.classList.remove("hidden");
+  r.innerHTML=`${esc(name)}, kết quả của bạn:<br><span>${score}/${Q.length}</span> câu đúng`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("go").onclick=start;
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")start()});
+$("submit").onclick=submit;
+</script>
+</body>
+</html>
