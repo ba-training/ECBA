@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECBA Test 2</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1f2937;--mu:#6b7280;--pr:#2563eb;--ok:#16a34a;--okb:#dcfce7;--ko:#dc2626;--kob:#fee2e2;--bd:#e5e7eb}
+@media(prefers-color-scheme:dark){:root{--bg:#111827;--card:#1f2937;--tx:#f3f4f6;--mu:#9ca3af;--bd:#374151;--okb:#14532d;--kob:#7f1d1d}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+header{background:var(--pr);color:#fff;text-align:center;padding:22px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:1.5rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+main{max-width:760px;margin:0 auto;padding:20px 14px 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:16px}
+.start{text-align:center;margin-top:40px}
+input[type=text]{width:100%;max-width:340px;padding:11px 14px;font-size:1rem;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+button{background:var(--pr);color:#fff;border:0;border-radius:8px;padding:11px 26px;font-size:1rem;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.err{color:var(--ko);font-size:.9rem;min-height:1.3em;margin-top:6px}
+.q{font-weight:600;margin:0 0 12px}
+.q small{color:var(--mu);font-weight:500}
+label.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer}
+label.opt:hover{border-color:var(--pr)}
+label.opt input{margin-top:4px}
+.done label.opt{cursor:default}
+.opt.correct{background:var(--okb);border-color:var(--ok)}
+.opt.wrong{background:var(--kob);border-color:var(--ko)}
+.badge{font-weight:700;margin-top:6px;font-size:.95rem}
+.badge.ok{color:var(--ok)}.badge.ko{color:var(--ko)}
+.result{text-align:center;font-size:1.3rem;font-weight:700}
+.result span{color:var(--pr);font-size:1.9rem}
+.exp{margin-top:10px;padding:12px;border-left:4px solid var(--pr);background:var(--bg);border-radius:6px;font-size:.93rem}
+.exp p{margin:0 0 8px}.exp p:last-child{margin:0}
+.exp .t{font-weight:700;color:var(--pr)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1>ECBA Test 2</h1><p id="who"></p></header>
+<main>
+  <section id="start" class="card start">
+    <h2>Nhập tên của bạn để bắt đầu</h2>
+    <input id="name" type="text" placeholder="Họ và tên" autocomplete="name">
+    <div class="err" id="err"></div>
+    <button id="go">Bắt đầu làm bài</button>
+  </section>
+  <section id="quiz" class="hidden">
+    <div id="result" class="card result hidden"></div>
+    <div id="list"></div>
+    <div style="text-align:center"><button id="submit">Nộp bài</button></div>
+  </section>
+</main>
+<script>
+const Q=[{"q": "When should prioritization of requirements take place?", "o": ["After the maintain requirements task has been completed", "At the very beginning of an initiative only", "Continually throughout the initiative", "After the maintain requirements and trace requirements tasks have been completed"], "k": 2, "e": ["Prioritization of requirements should take place continually throughout the initiative, not just at the beginning or after specific tasks. It is an ongoing process to ensure that the most important requirements are addressed."]}, {"q": "A business analyst is working for a retail chain and is tasked with analyzing a large dataset to help determine future business strategies. Which of the following actions is LEAST likely to be a part of her duties regarding data mining?", "o": ["Identifying clusters of model cases", "Predicting future trends", "Discovering patterns and correlations in large data sets", "Making an immediate decision"], "k": 3, "e": ["The correct answer is Option 2. In the context of data mining, a business analyst is responsible for discovering patterns and correlations, predicting future trends, and identifying clusters of model cases. However, making an immediate decision is not typically a part of the data mining process. Instead, the insights gained from data mining would be used to inform strategic decision-making processes, which often involve other stakeholders and take into consideration multiple factors beyond the data analysis.", "Option 1: Option 1 is incorrect. Identifying clusters of model cases is a typical goal in data mining as it helps in segmenting the data and understanding patterns more clearly.", "Option 3: Option 3 is incorrect. Predicting future trends is one of the main objectives of data mining. It helps the business in planning its future strategies.", "Option 4: Option 4 is incorrect. Discovering patterns and correlations in large data sets is a fundamental part of data mining. It helps in understanding the data and drawing meaningful insights from it."]}, {"q": "During the requirements analysis stage of a new software development project, your team is discussing the potential impacts of a change in one of the requirements. In this context, what would traceability allow?", "o": ["It allows to ignore inconsistencies and gaps in requirements.", "It provides a reliable assessment of which requirements have been addressed and which have not.", "It allows to conduct a slow and complicated impact analysis.", "It provides shallow insights into the scope and complexity of a change."], "k": 1, "e": ["Traceability, in the context of requirement management, allows for a reliable assessment of which requirements have been addressed and which have not. This is critical during the analysis stage as it helps to understand the potential impacts of a change in one of the requirements. It provides a clear view of the dependencies among requirements, thus facilitating the impact analysis.", "Option 1: Traceability does not allow to ignore inconsistencies and gaps in requirements. On the contrary, it helps to identify and address them.", "Option 2: Traceability does not lead to a slow and complicated impact analysis. Instead, it aids in making the impact analysis more efficient and effective by providing a clear view of the dependencies among requirements.", "Option 3: Traceability does not provide shallow insights into the scope and complexity of a change. Rather, it offers deep insights by tracking all requirements and their interdependencies."]}, {"q": "Which of the following items is commonly used by a business analyst (BA) during requirements verification?", "o": ["A business model canvas with financial estimates", "A benchmarking report with industry comparisons", "A checklist with a standard set of quality elements", "A user story with inputs and outputs"], "k": 2, "e": ["A checklist with a standard set of quality elements is commonly used by business analysts during requirements verification to ensure that the requirements meet predefined criteria."]}, {"q": "Requirements that can be reused in the long term have which of the following characteristics?", "o": ["Direct ties to a specific requirements tool", "Detailed references to an application", "Limited or no references to specific solutions", "Specific connections to one or more departments"], "k": 2, "e": ["Requirements that can be be reused in the long term should have limited or no references to specific solutions, ensuring they can be applied to a variety of situations."]}, {"q": "Elicitation results need to be confirmed to ensure:", "o": ["information gathered is accurate and consistent with other information.", "stakeholders are encouraged to work towards a common goal.", "information relevant to change is explored, drawn out and identified.", "scope of elicitation activity is understood and the right technique is selected."], "k": 0, "e": ["Elicitation results need to be confirmed to ensure that the information gathered is accurate and consistent with other information. This confirmation helps maintain data integrity and the quality of the elicited information."]}, {"q": "You are working as a business analyst in a software development company and you are in the process of prioritizing the requirements for a new project. You are in consultation with an implementation subject matter expert (SME). According to BABOK® v3, how can the SME assist you in this process?", "o": ["The SME verifies that the prioritized requirements will deliver value from a customer perspective.", "The SME provides input relating to technical dependencies within the project.", "The SME uses the prioritization as input into the project plan.", "The SME verifies the legal and regulatory constraints on the project."], "k": 1, "e": ["According to BABOK® v3, an implementation subject matter expert (SME) can provide valuable insights into the technical dependencies of a project. This can assist in the prioritization of requirements, as understanding these dependencies can help to identify which requirements are most critical to the project's success.", "Option 1: While verifying legal and regulatory constraints is important, it is typically not the primary role of an implementation SME in the process of prioritizing requirements.", "Option 3: While the prioritization of requirements can certainly inform the project plan, this is typically the responsibility of the project manager, not the implementation SME.", "Option 4: While the SME may have insights into the potential value of the requirements from a technical perspective, verifying the value from a customer perspective is typically the role of a business analyst or a product owner."]}, {"q": "You are a Business Analyst at TechFusion Corp, a company that is planning to upgrade its Customer Relationship Management (CRM) system to better track customer interactions and enhance overall service quality. The senior management has requested a Business Case to evaluate the feasibility and potential benefits of this upgrade. As you begin to draft the Business Case, you start outlining the essential sections that should be included to provide a comprehensive view to the decisionmakers. Which of the following elements is NOT typically included in the initial draft of a Business Case for TechFusion Corp's CRM system upgrade?", "o": ["Risk Assessment", "Detailed Technical Specifications", "Business Impact Analysis", "CostBenefit Analysis"], "k": 1, "e": ["The correct answer is Detailed Technical Specifications. When drafting a Business Case, the focus is primarily on the business aspects of the proposed initiative or project. This includes elements such as a Cost-Benefit Analysis, which provides a comparison of the costs and benefits of the proposed initiative; a Business Impact Analysis, which assesses the potential impacts on the business if the initiative is undertaken; and a Risk Assessment, which identifies potential risks associated with the initiative. Detailed Technical Specifications, on the other hand, are typically not included in the initial draft of a Business Case as they pertain to the specific technical requirements of the initiative, which are usually detailed after the business case has been approved.", "Option 1: Cost-Benefit Analysis is typically included in the initial draft of a Business Case as it provides a comparison of the costs and benefits of the proposed initiative.", "Option 2: Business Impact Analysis is typically included in the initial draft of a Business Case as it assesses the potential impacts on the business if the initiative is undertaken.", "Option 3: Risk Assessment is typically included in the initial draft of a Business Case as it identifies potential risks associated with the initiative."]}, {"q": "You are a Business Analyst working on a project to implement a new CRM system. The Project Manager is keen to understand how they can contribute to the 'Analyze Potential Value and Recommend Solution' task. How would you describe the Project Manager's primary responsibility in this task?", "o": ["The Project Manager is accountable for the success of a project and must be kept informed of the current status of business analysis work.", "The Project Manager's primary responsibility is to clean and organize the workspace.", "The Project Manager's main task is to socialize and entertain stakeholders during business analysis meetings.", "The Project Manager is primarily responsible for providing the team with coffee and snacks during meetings."], "k": 0, "e": ["In the 'Analyze Potential Value and Recommend Solution' task, the Project Manager's primary responsibility is to ensure the success of the project. This includes being informed of the current status of business analysis work. The Project Manager needs to understand the implications of the business analysis work on the project schedule, budget, and resources. They also need to understand the potential value of the recommended solution to ensure that it aligns with the project's objectives and delivers the expected benefits.", "Option 1: While providing refreshments may contribute to a comfortable and productive working environment, it is not the primary responsibility of the Project Manager in the 'Analyze Potential Value and Recommend Solution' task.", "Option 2: Cleaning and organizing the workspace is more related to office management and does not directly contribute to the 'Analyze Potential Value and Recommend Solution' task.", "Option 3: While stakeholder engagement is important, the Project Manager's primary role in this task is not to socialize or entertain stakeholders, but to ensure the project's success by staying informed of the business analysis work."]}, {"q": "Your organization is implementing a new software tool. As a business analyst, you are tasked with ensuring the quality of the requirements. What technique would you use to evaluate the quality of the requirements?", "o": ["Metrics and Key Performance Indicators (KPIs)", "Stakeholder Analysis", "Item Tracking", "Risk Assessment"], "k": 0, "e": ["Metrics and Key Performance Indicators (KPIs) are used to evaluate the quality of the requirements. They provide a quantitative basis for making decisions and taking actions in process management and improvement. They help in understanding the performance of the process, predict the future performance, and provide a basis for underpinning many decisions about process improvements.", "Option 1: Stakeholder Analysis is used to identify the people who have a vested interest in the outcome of a project. It does not directly evaluate the quality of the requirements.", "Option 2: Risk Assessment is used to identify and evaluate risks in order to reduce or eliminate their impact. It does not directly evaluate the quality of the requirements.", "Option 4: Item Tracking is used to manage and track items throughout their lifecycle. It does not directly evaluate the quality of the requirements."]}];
+const L="ABCDEFGH";
+const $=id=>document.getElementById(id);
+let name="";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function start(){
+  name=$("name").value.trim();
+  if(!name){$("err").textContent="Vui lòng nhập tên trước khi làm bài.";return}
+  $("who").textContent="Người làm bài: "+name;
+  $("start").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  render();
+}
+function render(){
+  $("list").innerHTML=Q.map((q,i)=>`
+    <div class="card" id="c${i}">
+      <p class="q"><small>Câu ${i+1}/${Q.length}</small><br>${esc(q.q)}</p>
+      ${q.o.map((o,j)=>`<label class="opt" id="o${i}_${j}"><input type="radio" name="q${i}" value="${j}"><span><b>${L[j]}.</b> ${esc(o)}</span></label>`).join("")}
+      <div class="badge" id="b${i}"></div><div id="e${i}"></div>
+    </div>`).join("");
+}
+function submit(){
+  let score=0;
+  Q.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name=q${i}]:checked`);
+    const ans=sel?+sel.value:-1;
+    document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.disabled=true);
+    $("c"+i).classList.add("done");
+    $(`o${i}_${q.k}`).classList.add("correct");
+    $("e"+i).innerHTML=`<div class="exp"><p class="t">Giải thích</p>${q.e.map(x=>`<p>${esc(x)}</p>`).join("")}</div>`;
+    const b=$("b"+i);
+    if(ans===q.k){score++;b.className="badge ok";b.textContent="✓ Đúng"}
+    else{
+      if(ans>=0)$(`o${i}_${ans}`).classList.add("wrong");
+      b.className="badge ko";
+      b.textContent=(ans<0?"✗ Chưa trả lời":"✗ Sai")+" — Đáp án đúng: "+L[q.k]+". "+q.o[q.k];
+    }
+  });
+  $("submit").classList.add("hidden");
+  const r=$("result");
+  r.classList.remove("hidden");
+  r.innerHTML=`${esc(name)}, kết quả của bạn:<br><span>${score}/${Q.length}</span> câu đúng`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("go").onclick=start;
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")start()});
+$("submit").onclick=submit;
+</script>
+</body>
+</html>
